@@ -97,6 +97,8 @@ try:
             new_pulse = MIN_PULSE  # Jump to minimum
         elif key == 'd':
             new_pulse = MAX_PULSE  # Jump to maximum
+        elif key == 'c':
+            new_pulse = CENTER_PULSE  # Jump to center
         elif key == 'q':
             # Quit the loop
             print("\n\nExiting Manual Mode.")
