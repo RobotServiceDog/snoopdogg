@@ -1,0 +1,31 @@
+services:
+  ros2:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        UID: ${HOST_UID:-1000}
+        GID: ${HOST_GID:-1000}
+        DEVUSER: dev
+    container_name: snoopy
+    working_dir: /snoopy
+    volumes:
+      - ./snoopy:/snoopy
+      - ros-apt-cache:/var/cache/apt
+      - ros-rosdep-cache:/var/cache/rosdep
+      - ccache:/home/dev/.ccache
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-23}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+    tty: true
+    stdin_open: true
+    init: true
+    shm_size: "2g"
+    network_mode: bridge
+
+volumes:
+  ros-apt-cache:
+  ros-rosdep-cache:
+  ccache:
