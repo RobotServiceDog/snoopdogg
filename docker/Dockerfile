@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-colcon-common-extensions python3-vcstool \
     python3-rosdep python3-argcomplete ccache \
     ros-humble-rmw-cyclonedds-cpp \ 
-    ros-humble-demo-nodes-cpp ros-humble-demo-nodes-py \
  && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user (robust if UID/GID already exist)

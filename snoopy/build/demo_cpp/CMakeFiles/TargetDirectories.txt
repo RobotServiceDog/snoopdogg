@@ -1,9 +1,0 @@
-/snoopy/build/demo_cpp/CMakeFiles/uninstall.dir
-/snoopy/build/demo_cpp/CMakeFiles/demo_cpp_uninstall.dir
-/snoopy/build/demo_cpp/CMakeFiles/test.dir
-/snoopy/build/demo_cpp/CMakeFiles/edit_cache.dir
-/snoopy/build/demo_cpp/CMakeFiles/rebuild_cache.dir
-/snoopy/build/demo_cpp/CMakeFiles/list_install_components.dir
-/snoopy/build/demo_cpp/CMakeFiles/install.dir
-/snoopy/build/demo_cpp/CMakeFiles/install/local.dir
-/snoopy/build/demo_cpp/CMakeFiles/install/strip.dir
