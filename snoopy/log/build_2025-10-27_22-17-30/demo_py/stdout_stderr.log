@@ -1,0 +1,31 @@
+running egg_info
+creating ../../build/demo_py/demo_py.egg-info
+writing ../../build/demo_py/demo_py.egg-info/PKG-INFO
+writing dependency_links to ../../build/demo_py/demo_py.egg-info/dependency_links.txt
+writing entry points to ../../build/demo_py/demo_py.egg-info/entry_points.txt
+writing requirements to ../../build/demo_py/demo_py.egg-info/requires.txt
+writing top-level names to ../../build/demo_py/demo_py.egg-info/top_level.txt
+writing manifest file '../../build/demo_py/demo_py.egg-info/SOURCES.txt'
+reading manifest file '../../build/demo_py/demo_py.egg-info/SOURCES.txt'
+writing manifest file '../../build/demo_py/demo_py.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /snoopy/build/demo_py/build
+creating /snoopy/build/demo_py/build/lib
+creating /snoopy/build/demo_py/build/lib/demo_py
+copying demo_py/__init__.py -> /snoopy/build/demo_py/build/lib/demo_py
+running install
+running install_lib
+creating /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py
+copying /snoopy/build/demo_py/build/lib/demo_py/__init__.py -> /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py
+byte-compiling /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /snoopy/install/demo_py/share/ament_index
+creating /snoopy/install/demo_py/share/ament_index/resource_index
+creating /snoopy/install/demo_py/share/ament_index/resource_index/packages
+copying resource/demo_py -> /snoopy/install/demo_py/share/ament_index/resource_index/packages
+copying package.xml -> /snoopy/install/demo_py/share/demo_py
+running install_egg_info
+Copying ../../build/demo_py/demo_py.egg-info to /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/snoopy/build/demo_py/install.log'

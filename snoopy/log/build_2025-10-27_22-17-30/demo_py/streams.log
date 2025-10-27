@@ -1,0 +1,33 @@
+[0.385s] Invoking command in '/snoopy/src/demo_py': PYTHONPATH=/snoopy/build/demo_py/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/snoopy/install/demo_py/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/demo_py build --build-base /snoopy/build/demo_py/build install --record /snoopy/build/demo_py/install.log --single-version-externally-managed install_data
+[0.511s] running egg_info
+[0.512s] creating ../../build/demo_py/demo_py.egg-info
+[0.512s] writing ../../build/demo_py/demo_py.egg-info/PKG-INFO
+[0.512s] writing dependency_links to ../../build/demo_py/demo_py.egg-info/dependency_links.txt
+[0.512s] writing entry points to ../../build/demo_py/demo_py.egg-info/entry_points.txt
+[0.512s] writing requirements to ../../build/demo_py/demo_py.egg-info/requires.txt
+[0.512s] writing top-level names to ../../build/demo_py/demo_py.egg-info/top_level.txt
+[0.512s] writing manifest file '../../build/demo_py/demo_py.egg-info/SOURCES.txt'
+[0.513s] reading manifest file '../../build/demo_py/demo_py.egg-info/SOURCES.txt'
+[0.514s] writing manifest file '../../build/demo_py/demo_py.egg-info/SOURCES.txt'
+[0.514s] running build
+[0.514s] running build_py
+[0.514s] creating /snoopy/build/demo_py/build
+[0.514s] creating /snoopy/build/demo_py/build/lib
+[0.514s] creating /snoopy/build/demo_py/build/lib/demo_py
+[0.514s] copying demo_py/__init__.py -> /snoopy/build/demo_py/build/lib/demo_py
+[0.514s] running install
+[0.514s] running install_lib
+[0.515s] creating /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py
+[0.515s] copying /snoopy/build/demo_py/build/lib/demo_py/__init__.py -> /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py
+[0.515s] byte-compiling /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py/__init__.py to __init__.cpython-310.pyc
+[0.515s] running install_data
+[0.515s] creating /snoopy/install/demo_py/share/ament_index
+[0.515s] creating /snoopy/install/demo_py/share/ament_index/resource_index
+[0.515s] creating /snoopy/install/demo_py/share/ament_index/resource_index/packages
+[0.516s] copying resource/demo_py -> /snoopy/install/demo_py/share/ament_index/resource_index/packages
+[0.516s] copying package.xml -> /snoopy/install/demo_py/share/demo_py
+[0.516s] running install_egg_info
+[0.517s] Copying ../../build/demo_py/demo_py.egg-info to /snoopy/install/demo_py/lib/python3.10/site-packages/demo_py-0.0.0-py3.10.egg-info
+[0.517s] running install_scripts
+[0.533s] writing list of installed files to '/snoopy/build/demo_py/install.log'
+[0.550s] Invoked command in '/snoopy/src/demo_py' returned '0': PYTHONPATH=/snoopy/build/demo_py/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/snoopy/install/demo_py/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/demo_py build --build-base /snoopy/build/demo_py/build install --record /snoopy/build/demo_py/install.log --single-version-externally-managed install_data
