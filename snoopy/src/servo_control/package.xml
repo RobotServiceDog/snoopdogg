@@ -3,8 +3,8 @@
 <package format="3">
   <name>servo_control</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="dev@todo.todo">dev</maintainer>
+  <description>Servo Control Module that uses pigpio</description>
+  <maintainer>Shivansh Singh</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
