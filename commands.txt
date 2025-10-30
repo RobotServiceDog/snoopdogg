@@ -1,0 +1,15 @@
+
+# Build docker container (after changes to Dockerfile)
+docker compose build --no-cache
+
+# Run docker container
+./run.sh
+
+# Source Build (do once at start/something funky goind)
+source install/setup.bash
+
+# Build Package
+colcon build --packages-select <package_name> --symlink-install
+
+# Launch ROS2 Component
+ros2 launch <package_name> launch.py
