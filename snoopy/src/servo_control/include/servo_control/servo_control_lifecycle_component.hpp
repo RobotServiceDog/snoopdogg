@@ -12,7 +12,7 @@ using CallbackReturn =
 class ServoControlLifecycleNode : public rclcpp_lifecycle::LifecycleNode
 {
     public:
-        explicit ServoLifecycleNode(const rclcpp::NodeOptions &options);
+        explicit ServoControlLifecycleNode(const rclcpp::NodeOptions &options);
 
     protected:
         CallbackReturn on_configure(const rclcpp_lifecycle::State &state) override;
