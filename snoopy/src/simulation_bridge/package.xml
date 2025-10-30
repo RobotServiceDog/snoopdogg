@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+            schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>simulation_bridge</name>
+  <version>0.0.1</version>
+  <description>Simulation Bridge for Gazebo </description>
+
+  <maintainer email="shivansh.sonit@gmail.com">Shivansh Singh</maintainer>
+  <license>MIT</license>
+
+  <!-- Build system -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Core ROS dependencies -->
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>rclcpp_components</depend>
+  <depend>lifecycle_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <!-- External libraries -->
+
+  <!-- Testing -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <!-- Required for rclcpp_components to discover the plugin -->
+    <build_type>ament_cmake</build_type>
+    <rclcpp_components plugin="${prefix}/share/${PROJECT_NAME}/component_plugins.xml"/>
+  </export>
+</package>
