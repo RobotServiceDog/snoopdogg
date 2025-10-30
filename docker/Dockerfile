@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake python3-pip \
     python3-colcon-common-extensions python3-vcstool \
     python3-rosdep python3-argcomplete ccache \
-    ros-humble-rmw-cyclonedds-cpp \ 
+    ros-humble-rmw-cyclonedds-cpp \
+    libpigpiod-if-dev libpigpiod-if2-1 pigpio-tools \
  && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user (robust if UID/GID already exist)
