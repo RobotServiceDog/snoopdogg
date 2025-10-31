@@ -12,6 +12,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpigpiod-if-dev libpigpiod-if2-1 pigpio-tools \
  && rm -rf /var/lib/apt/lists/*
 
+# Gazebo simulation
+ARG SIM_MODE=OFF
+RUN if [ "$SIM_MODE" = "ON" ]; then \
+    echo "Installing Ignition Gazebo Fortress..." && \
+    wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] \
+        http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | \
+        tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y ignition-fortress ros-humble-ros-ign-gazebo ros-humble-ros-ign-bridge && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* ; \
+    else \
+        echo "SIM_MODE=OFF, skipping Ignition installation." ; \
+    fi
+
 # Create non-root user (robust if UID/GID already exist)
 ARG DEVUSER=dev
 ARG UID=1000
