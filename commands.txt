@@ -1,15 +1,17 @@
 
 # Build docker container (after changes to Dockerfile)
 docker compose build --no-cache
+# If you want the image to have gazebo simulation
+docker compose build --no-cache --build-arg SIM_MODE=ON
 
-# Run docker container
+# Run docker container (use flag `--sim` to run with gazebo simulation)
 ./run.sh
-
-# Source Build (do once at start/something funky goind)
-source install/setup.bash
 
 # Build Package
 colcon build --packages-select <package_name> --symlink-install
+
+# Source Build (do once at start/something funky goind)
+source install/setup.bash
 
 # Launch ROS2 Component
 ros2 launch <package_name> launch.py

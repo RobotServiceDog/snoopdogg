@@ -1,2 +1,8 @@
 # Python
 __pycache__/
+
+# Folder names
+build/
+install/
+log/
+devel/
