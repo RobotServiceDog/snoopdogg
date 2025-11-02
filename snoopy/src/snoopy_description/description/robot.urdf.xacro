@@ -16,7 +16,7 @@
 
   <link name="base_link">
     <inertial>
-      <origin xyz="${base_com_xyz}" rpy="0 0 0" />
+      <origin xyz="${base_com_x} ${base_com_y} ${base_com_z}" rpy="0 0 0" />
       <mass value="${base_mass}" />
       <inertia
         ixx="${base_ixx}" ixy="${base_ixy}" ixz="${base_ixz}"

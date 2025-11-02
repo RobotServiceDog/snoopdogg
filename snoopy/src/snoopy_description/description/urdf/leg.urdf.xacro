@@ -7,7 +7,7 @@
 
     <link name="${prefix}_HIP">
       <inertial>
-        <origin xyz="${hip_com_xyz}" rpy="0 0 0" />
+        <origin xyz="${hip_com_x} ${hip_com_y} ${hip_com_z}" rpy="0 0 0" />
         <mass value="${hip_mass}" />
         <inertia  ixx="${hip_ixx}" ixy="0" ixz="0" iyy="${hip_iyy}" iyz="0" izz="${hip_izz}" />
       </inertial>
@@ -30,13 +30,15 @@
       <parent link="${parent_link}" />
       <child link="${prefix}_HIP" />
       <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
-      <axis xyz="1 0 0" /> <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+      <axis xyz="1 0 0" />
+      <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
     </joint>
 
     <link name="${prefix}_THIGH">
       <inertial>
-        <origin xyz="${thigh_com_xyz}" rpy="0 0 0" />
-        <mass value="${thigh_mass_front}" /> <inertia ixx="${thigh_ixx}" ixy="0" ixz="0" iyy="${thigh_iyy}" iyz="0" izz="${thigh_izz}" />
+        <origin xyz="${thigh_com_x} ${thigh_com_y} ${thigh_com_z}" rpy="0 0 0" />
+        <mass value="${thigh_mass_front}" />
+        <inertia ixx="${thigh_ixx}" ixy="0" ixz="0" iyy="${thigh_iyy}" iyz="0" izz="${thigh_izz}" />
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -44,6 +46,12 @@
           <mesh filename="package://snoopy_description/meshes/${thigh_mesh}" />
         </geometry>
       </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://snoopy_description/meshes/${thigh_mesh}" />
+        </geometry>
+      </collision>
     </link>
 
     <joint name="${prefix}_THIGH_JOINT" type="revolute">
@@ -52,12 +60,13 @@
       <parent link="${prefix}_HIP" />
       <child link="${prefix}_THIGH" />
       <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
-      <axis xyz="0 1 0" /> <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+      <axis xyz="0 1 0" />
+      <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
     </joint>
 
     <link name="${prefix}_THIGH_FOOT">
       <inertial>
-        <origin xyz="${thigh_foot_com_xyz}" rpy="0 0 0" />
+        <origin xyz="${thigh_foot_com_x} ${thigh_foot_com_y} ${thigh_foot_com_z}" rpy="0 0 0" />
         <mass value="${thigh_foot_mass}" />
         <inertia ixx="${thigh_foot_ixx}" ixy="0" ixz="0" iyy="${thigh_foot_iyy}" iyz="0" izz="${thigh_foot_izz}" />
       </inertial>
@@ -81,7 +90,8 @@
       <parent link="${prefix}_THIGH" />
       <child link="${prefix}_THIGH_FOOT" />
       <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
-      <axis xyz="0 1 0" /> <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+      <axis xyz="0 1 0" />
+      <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
     </joint>
     
     <link name="${prefix}_TOE">
