@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="snoopy_ros2_control">
+    <ros2_control name="SnoopyHardware" type="system">
+      <hardware>
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        
+      </hardware>
+      
+      <xacro:macro name="leg_ros2_control_joints" params="prefix">
+        <joint name="${prefix}_HIP_JOINT">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+          <state_interface name="effort"/>
+        </joint>
+        <joint name="${prefix}_THIGH_JOINT">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+          <state_interface name="effort"/>
+        </joint>
+        <joint name="${prefix}_THIGH_FOOT_JOINT">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+          <state_interface name="effort"/>
+        </joint>
+      </xacro:macro>
+
+      <xacro:leg_ros2_control_joints prefix="LF" />
+      <xacro:leg_ros2_control_joints prefix="RF" />
+      <xacro:leg_ros2_control_joints prefix="LH" />
+      <xacro:leg_ros2_control_joints prefix="RH" />
+
+    </ros2_control>
+
+    <gazebo>
+      <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libign_ros2_control-system.so">
+          <robot_param>robot_description</robot_param>
+          <robot_param_node>robot_state_publisher</robot_param_node>
+          <parameters>$(find snoopy_description)/config/ros2_controllers.yaml</parameters>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

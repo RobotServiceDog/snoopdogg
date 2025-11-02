@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<robot name="snoopy" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find snoopy_description)/description/config/snoopy_dimensions.xacro" />
+  <xacro:include filename="$(find snoopy_description)/description/urdf/leg.urdf.xacro" />
+  <xacro:include filename="$(find snoopy_description)/description/urdf/snoopy.ros2_control.xacro" />
+
+  <link name="base_footprint">
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint" />
+    <child link="base_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" /> 
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="${base_com_xyz}" rpy="0 0 0" />
+      <mass value="${base_mass}" />
+      <inertia
+        ixx="${base_ixx}" ixy="${base_ixy}" ixz="${base_ixz}"
+        iyy="${base_iyy}" iyz="${base_iyz}" izz="${base_izz}" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="${base_mesh}" />
+      </geometry>
+      <material name="blue">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="${base_mesh}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <xacro:leg
+    prefix="LF"
+    parent_link="base_link"
+    hip_x="${hip_joint_offset_x_front}"
+    hip_y="${hip_joint_offset_y}"
+    hip_joint_rpy="0 0 0"
+    thigh_joint_rpy="${thigh_joint_rpy_mirror_l}"
+    foot_joint_rpy="${foot_joint_rpy_mirror_l}"
+    hip_mesh="LF_HIP.STL"
+    thigh_mesh="LF_THIGH.STL"
+    thigh_foot_mesh="LF_THIGH_FOOT.STL"
+    hip_visual_offset_rpy="0 0 0"
+  />
+
+  <xacro:leg
+    prefix="RF"
+    parent_link="base_link"
+    hip_x="${hip_joint_offset_x_front}"
+    hip_y="${-hip_joint_offset_y}"
+    hip_joint_rpy="0 0 0"
+    thigh_joint_rpy="${thigh_joint_rpy_mirror_r}"
+    foot_joint_rpy="${foot_joint_rpy_mirror_r}"
+    hip_mesh="RF_HIP.STL"
+    thigh_mesh="RF_THIGH.STL"
+    thigh_foot_mesh="RF_THIGH_FOOT.STL"
+    hip_visual_offset_rpy="0 0 0"
+  />
+
+  <xacro:leg
+    prefix="LH"
+    parent_link="base_link"
+    hip_x="${hip_joint_offset_x_rear}"
+    hip_y="${hip_joint_offset_y}"
+    hip_joint_rpy="0 0 0"
+    thigh_joint_rpy="${thigh_joint_rpy_mirror_l}"
+    foot_joint_rpy="${foot_joint_rpy_mirror_l}"
+    hip_mesh="LH_HIP.STL"
+    thigh_mesh="LH_THIGH.STL"
+    thigh_foot_mesh="LH_THIGH_FOOT.STL"
+    hip_visual_offset_rpy="0 0 0"
+  />
+
+  <xacro:leg
+    prefix="RH"
+    parent_link="base_link"
+    hip_x="${hip_joint_offset_x_rear}"
+    hip_y="${-hip_joint_offset_y}"
+    hip_joint_rpy="0 0 0"
+    thigh_joint_rpy="${thigh_joint_rpy_mirror_r}"
+    foot_joint_rpy="${foot_joint_rpy_mirror_r}"
+    hip_mesh="LH_HIP.STL"
+    thigh_mesh="RH_THIGH.STL"
+    thigh_foot_mesh="RH_THIGH_FOOT.STL"
+    hip_visual_offset_rpy="3.14159 0 0"
+  />
+
+  <xacro:snoopy_ros2_control />
+
+</robot>
