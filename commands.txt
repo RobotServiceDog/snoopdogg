@@ -7,6 +7,9 @@ docker compose build --no-cache --build-arg SIM_MODE=ON
 # Run docker container (use flag `--sim` to run with gazebo simulation)
 ./run.sh
 
+# Open a new terminal in the same container
+docker exec -it snoopdogg_container /bin/bash
+
 # Build Package
 colcon build --packages-select <package_name> --symlink-install
 

@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Basic dev tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    bash-completion sudo git curl wget vim less \
+    bash-completion sudo git curl wget vim nano less \
     build-essential cmake python3-pip \
     python3-colcon-common-extensions python3-vcstool \
     python3-rosdep python3-argcomplete ccache \
@@ -21,11 +21,20 @@ RUN if [ "$SIM_MODE" = "ON" ]; then \
         http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | \
         tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update && \
-    apt-get install -y ignition-fortress ros-humble-ros-ign-gazebo ros-humble-ros-ign-bridge && \
+    apt-get install -y ignition-fortress ros-humble-ros-ign-gazebo ros-humble-ros-ign-bridge ros-humble-gz-ros2-control && \
+    apt-get install -y ros-humble-rviz2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* ; \
     else \
         echo "SIM_MODE=OFF, skipping Ignition installation." ; \
     fi
+
+# Ros2 packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-ros2-control \
+    ros-humble-ros2-controllers \
+    ros-humble-twist-mux \
+    ros-humble-xacro \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user (robust if UID/GID already exist)
 ARG DEVUSER=dev

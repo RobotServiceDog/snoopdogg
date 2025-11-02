@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find snoopy_description)/description/config/snoopy_dimensions.xacro" />
+
+  <xacro:macro name="leg" params="prefix parent_link hip_x hip_y hip_joint_rpy thigh_joint_rpy foot_joint_rpy hip_mesh thigh_mesh thigh_foot_mesh hip_visual_offset_rpy">
+
+    <link name="${prefix}_HIP">
+      <inertial>
+        <origin xyz="${hip_com_xyz}" rpy="0 0 0" />
+        <mass value="${hip_mass}" />
+        <inertia  ixx="${hip_ixx}" ixy="0" ixz="0" iyy="${hip_iyy}" iyz="0" izz="${hip_izz}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="${hip_visual_offset_rpy}" />
+        <geometry>
+          <mesh filename="package://snoopy_description/meshes/${hip_mesh}" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://snoopy_description/meshes/${hip_mesh}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_HIP_JOINT" type="revolute">
+      <origin xyz="${hip_x} ${hip_y} ${hip_joint_offset_z}" rpy="0 0 0" />
+      <parent link="${parent_link}" />
+      <child link="${prefix}_HIP" />
+      <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+      <axis xyz="1 0 0" /> <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+    </joint>
+
+    <link name="${prefix}_THIGH">
+      <inertial>
+        <origin xyz="${thigh_com_xyz}" rpy="0 0 0" />
+        <mass value="${thigh_mass_front}" /> <inertia ixx="${thigh_ixx}" ixy="0" ixz="0" iyy="${thigh_iyy}" iyz="0" izz="${thigh_izz}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://snoopy_description/meshes/${thigh_mesh}" />
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_THIGH_JOINT" type="revolute">
+      <xacro:property name="thigh_y_offset" value="${hip_y * (thigh_joint_offset_y / hip_joint_offset_y)}" />
+      <origin xyz="${thigh_joint_offset_x} ${thigh_y_offset} ${thigh_joint_offset_z}" rpy="${thigh_joint_rpy}" />
+      <parent link="${prefix}_HIP" />
+      <child link="${prefix}_THIGH" />
+      <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+      <axis xyz="0 1 0" /> <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+    </joint>
+
+    <link name="${prefix}_THIGH_FOOT">
+      <inertial>
+        <origin xyz="${thigh_foot_com_xyz}" rpy="0 0 0" />
+        <mass value="${thigh_foot_mass}" />
+        <inertia ixx="${thigh_foot_ixx}" ixy="0" ixz="0" iyy="${thigh_foot_iyy}" iyz="0" izz="${thigh_foot_izz}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://snoopy_description/meshes/${thigh_foot_mesh}" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://snoopy_description/meshes/${thigh_foot_mesh}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_THIGH_FOOT_JOINT" type="revolute">
+      <xacro:property name="foot_y_offset" value="${hip_y * (foot_joint_offset_y / hip_joint_offset_y)}" />
+      <origin xyz="${foot_joint_offset_x} ${foot_y_offset} ${foot_joint_offset_z}" rpy="${foot_joint_rpy}" />
+      <parent link="${prefix}_THIGH" />
+      <child link="${prefix}_THIGH_FOOT" />
+      <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+      <axis xyz="0 1 0" /> <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+    </joint>
+    
+    <link name="${prefix}_TOE">
+      <inertial>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <mass value="${toe_mass}"/>
+        <inertia ixx="${toe_inertia}" ixy="0" ixz="0" iyy="${toe_inertia}" iyz="0" izz="${toe_inertia}"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <sphere radius="${toe_radius}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <sphere radius="${toe_radius}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_TOE_JOINT" type="fixed">
+      <origin rpy="0 0 0" xyz="${toe_joint_offset_xyz}"/>
+      <parent link="${prefix}_THIGH_FOOT"/>
+      <child link="${prefix}_TOE"/>
+    </joint>
+
+    <gazebo reference="${prefix}_TOE">
+        <kp>1000000.0</kp>
+        <kd>1.0</kd>
+        <mu1>0.8</mu1>
+        <mu2>0.8</mu2>
+        <maxVel>0.0</maxVel>
+        <minDepth>0.001</minDepth>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

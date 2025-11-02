@@ -1,0 +1,59 @@
+# ros2_controllers.yaml
+# Controller configuration for Snoopy quadruped
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Controller manager update rate (Hz)
+    
+    # List all controllers to be loaded by the controller manager.
+    # The spawner nodes will activate these.
+    # Note: joint_state_broadcaster is crucial for RViz/TF!
+    snoopy_position_controller:
+      type: "position_controllers/JointGroupPositionController"
+    joint_state_broadcaster:
+      type: "joint_state_broadcaster/JointStateBroadcaster"
+
+# --- 1. JOINT STATE BROADCASTER CONFIGURATION ---
+joint_state_broadcaster:
+  ros__parameters:
+    # All revolute joints must be listed here so the broadcaster knows which states to publish.
+    joints:
+      # Front Left Leg
+      - LF_HIP_JOINT
+      - LF_THIGH_JOINT
+      - LF_THIGH_FOOT_JOINT
+      # Front Right Leg
+      - RF_HIP_JOINT
+      - RF_THIGH_JOINT
+      - RF_THIGH_FOOT_JOINT
+      # Hind Left Leg
+      - LH_HIP_JOINT
+      - LH_THIGH_JOINT
+      - LH_THIGH_FOOT_JOINT
+      # Hind Right Leg
+      - RH_HIP_JOINT
+      - RH_THIGH_JOINT
+      - RH_THIGH_FOOT_JOINT
+
+# --- 2. POSITION CONTROLLER CONFIGURATION ---
+snoopy_position_controller:
+  ros__parameters:
+    publish_rate: 50.0  # Optional
+
+    # List the joints the position controller will send commands to.
+    joints:
+      # Front Left Leg
+      - LF_HIP_JOINT
+      - LF_THIGH_JOINT
+      - LF_THIGH_FOOT_JOINT
+      # Front Right Leg
+      - RF_HIP_JOINT
+      - RF_THIGH_JOINT
+      - RF_THIGH_FOOT_JOINT
+      # Hind Left Leg
+      - LH_HIP_JOINT
+      - LH_THIGH_JOINT
+      - LH_THIGH_FOOT_JOINT
+      # Hind Right Leg
+      - RH_HIP_JOINT
+      - RH_THIGH_JOINT
+      - RH_THIGH_FOOT_JOINT
