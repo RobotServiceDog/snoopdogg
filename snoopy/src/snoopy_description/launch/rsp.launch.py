@@ -4,6 +4,7 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, Command
 from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('snoopy_description')
@@ -14,18 +15,23 @@ def generate_launch_description():
 
     # Xacro command to generate URDF content
     robot_description_path = os.path.join(pkg_share, 'description', 'robot.urdf.xacro')
-    robot_description_content = Command([
-        'xacro ', robot_description_path,
-        ' use_sim_time:=', use_sim_time,
-        ' use_ros2_control:=', use_ros2_control,
-    ])
+    robot_description_content = ParameterValue(
+        Command([
+            'xacro ', robot_description_path,
+            ' use_sim_time:=', use_sim_time,
+            ' use_ros2_control:=', use_ros2_control,
+        ]),
+        value_type=str
+    )
     
     # Robot State Publisher Node
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description_content, 
-                     'use_sim_time': use_sim_time}],
+        parameters=[{
+            'robot_description': robot_description_content, 
+            'use_sim_time': use_sim_time
+        }],
         output='screen'
     )
     

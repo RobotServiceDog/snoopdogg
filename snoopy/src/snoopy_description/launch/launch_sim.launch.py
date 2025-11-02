@@ -25,7 +25,7 @@ def generate_launch_description():
     default_world_path = os.path.join(
         pkg_share_dir,
         'worlds',
-        'empty.sdf'
+        'basic.sdf'
     )
     
     world_config = LaunchConfiguration('world')
@@ -46,15 +46,18 @@ def generate_launch_description():
 
     # Gazebo Ignition Simulation
     gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
-            launch_arguments={'gz_args': '', 'on_exit_shutdown': 'true', 'world': world_config}.items()
+        PythonLaunchDescriptionSource([
+            os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
+        ]),
+        launch_arguments={
+            'gz_args': ['-r ', world_config],
+            'on_exit_shutdown': 'true'
+        }.items()
     )
 
-    # Spawn Robot Entity (Must complete before controllers start)
+    # Spawn Robot Entity (higher so we can see it fall and land on feet)
     spawn_entity = Node(package='ros_gz_sim', executable='create',
-        # FIX: Changed -z from '0.1' to '1.0' to make the dog start floating higher and fall
-        arguments=['-topic', 'robot_description', '-name', robot_name, '-z', '5.0'],
+        arguments=['-topic', 'robot_description', '-name', robot_name, '-z', '0.25'],
         output='screen')
 
     # --- 4. CONTROLLER NODES ---

@@ -10,7 +10,7 @@ find_package(ros2_controllers REQUIRED)
 
 # Install config, description, and launch files
 install(
-  DIRECTORY config description launch
+  DIRECTORY config description launch worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
