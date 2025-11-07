@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       args:
+        SIM_MODE: ${SIM_MODE:-ON}
         UID: ${HOST_UID:-1000}
         GID: ${HOST_GID:-1000}
         DEVUSER: dev
@@ -14,11 +15,16 @@ services:
       - ros-apt-cache:/var/cache/apt
       - ros-rosdep-cache:/var/cache/rosdep
       - ccache:/home/dev/.ccache
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /run/user/${HOST_UID}:/run/user/${HOST_UID}
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-23}
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - LANG=C.UTF-8
       - LC_ALL=C.UTF-8
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}
     tty: true
     stdin_open: true
     init: true
