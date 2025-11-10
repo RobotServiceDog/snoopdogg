@@ -1,11 +1,15 @@
 
 # Build docker container (after changes to Dockerfile)
 docker compose build --no-cache
+
 # If you want the image to have gazebo simulation
 docker compose build --no-cache --build-arg SIM_MODE=ON
 
-# Run docker container (use flag `--sim` to run with gazebo simulation)
+# Run docker container (use flag `--sim` to run gazebo simulation)
 ./run.sh
+
+# Attach already running container to new terminal
+./run.sh --attach
 
 # Build Package
 colcon build --packages-select <package_name> --symlink-install
