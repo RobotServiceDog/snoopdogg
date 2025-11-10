@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="base_mass" value="0.334134" />
+  <xacro:property name="base_com_x" value="-0.018543979" />
+  <xacro:property name="base_com_y" value="0.00085988" />
+  <xacro:property name="base_com_z" value="0.03132396" />
+  <xacro:property name="base_ixx" value="0.00057643" />
+  <xacro:property name="base_iyy" value="0.00361791" />
+  <xacro:property name="base_izz" value="0.00383778" />
+  <xacro:property name="base_ixy" value="0.00000275" />
+  <xacro:property name="base_ixz" value="-0.00000921" />
+  <xacro:property name="base_iyz" value="-0.00000422" />
+  <xacro:property name="base_mesh" value="package://snoopy_description/meshes/base_link.STL" />
+  
+  <xacro:property name="hip_joint_offset_x_front" value="0.0705" />
+  <xacro:property name="hip_joint_offset_x_rear" value="-0.1299" />
+  <xacro:property name="hip_joint_offset_y" value="0.04" />
+  <xacro:property name="hip_joint_offset_z" value="0.02425" />
+
+  <xacro:property name="joint_lower_limit" value="-3.14" />
+  <xacro:property name="joint_upper_limit" value="3.14" />
+  <xacro:property name="joint_effort_limit" value="500" />
+  <xacro:property name="joint_velocity_limit" value="2.5" />
+  <xacro:property name="joint_damping" value="0.01" />
+  <xacro:property name="joint_friction" value="0.0" />
+
+  <xacro:property name="hip_mass" value="0.09551479" />
+  <xacro:property name="hip_com_x" value="0.036729" />
+  <xacro:property name="hip_com_y" value="0.027408" />
+  <xacro:property name="hip_com_z" value="0.001181" />
+  <xacro:property name="rh_hip_com_x" value="-0.036729" />
+  <xacro:property name="rh_hip_com_y" value="0.027408" />
+  <xacro:property name="rh_hip_com_z" value="0.001181" />
+  <xacro:property name="hip_ixx" value="8.3668e-05" />
+  <xacro:property name="hip_iyy" value="5.2898e-05" />
+  <xacro:property name="hip_izz" value="0.00010700" />
+  <xacro:property name="hip_mesh_LF" value="package://snoopy_description/meshes/LF_HIP.STL" />
+  
+  <xacro:property name="thigh_mass_front" value="0.00708" />
+  <xacro:property name="thigh_mass_rear" value="0.00717" />
+  <xacro:property name="thigh_com_x" value="-0.04486" />
+  <xacro:property name="thigh_com_y" value="-0.00163" />
+  <xacro:property name="thigh_com_z" value="-0.02816" />
+  <xacro:property name="thigh_ixx" value="4.011e-06" />
+  <xacro:property name="thigh_iyy" value="1.187e-05" />
+  <xacro:property name="thigh_izz" value="8.333e-06" />
+  <xacro:property name="thigh_mesh_LF" value="package://snoopy_description/meshes/LF_THIGH.STL" />
+  <xacro:property name="thigh_joint_offset_x" value="0.02735" />
+  <xacro:property name="thigh_joint_offset_y" value="0.029523" />
+  <xacro:property name="thigh_joint_offset_z" value="0.0012724" />
+  <xacro:property name="thigh_joint_rpy_base" value="0.436332" />
+  <xacro:property name="thigh_joint_rpy_mirror_r" value="-0.11522 0.436332 -0.1069" />
+  <xacro:property name="thigh_joint_rpy_mirror_l" value="0.11522 0.436332 0.1069" />
+  
+  <xacro:property name="thigh_foot_mass" value="0.00294875" />
+  <xacro:property name="thigh_foot_com_x" value="0.04002" />
+  <xacro:property name="thigh_foot_com_y" value="0.005801" />
+  <xacro:property name="thigh_foot_com_z" value="-0.02456" />
+  <xacro:property name="thigh_foot_ixx" value="1.765e-06" />
+  <xacro:property name="thigh_foot_iyy" value="6.375e-06" />
+  <xacro:property name="thigh_foot_izz" value="4.649e-06" />
+  <xacro:property name="thigh_foot_mesh" value="package://snoopy_description/meshes/LF_THIGH_FOOT.STL" />
+  
+  <xacro:property name="foot_joint_offset_x" value="0.022028" />
+  <xacro:property name="foot_joint_offset_y" value="0.0023333" />
+  <xacro:property name="foot_joint_offset_z" value="-0.12152" />
+  <xacro:property name="foot_joint_rpy_mirror_l" value="-3.1416 -2.35619 3.1416" />
+  <xacro:property name="foot_joint_rpy_mirror_r" value="3.1416 -2.35619 -3.1416" />
+  
+  <xacro:property name="toe_mass" value="0.002" />
+  <xacro:property name="toe_inertia" value="2e-08" />
+  <xacro:property name="toe_radius" value="0.005" />
+  <xacro:property name="toe_joint_offset_xyz" value="-0.01 0 -0.116" />
+
+</robot>
