@@ -1,9 +1,9 @@
-parameters:
-  servo_speed:
-    type: double
-    default_value: 1.0
-    description: Max servo speed in rad/s
-  servo_torque:
-    type: double
-    default_value: 0.5
-    description: Max torque in Nm
+servo_control_node:
+  ros__parameters:
+    pins: [2, 14, 18, 23, 3, 15, 27, 24, 4, 17, 22, 25]
+    neutral_angles: [0, 0, 0, 0, 45, 45, 45, 45,-45,-45,-45, -45]
+    servo_multipliers: [1, 1, 1, 1, -1, 1, -1, 1, 1, -1, 1, -1]
+
+    min_pwm: 680
+    mid_pwm: 1500
+    max_pwm: 2320
