@@ -75,7 +75,7 @@ namespace servo_control
     {
     }
 
-    // Register this component so it can be loaded into a component container
-    RCLCPP_COMPONENTS_REGISTER_NODE(ServoControlLifecycleNode)
-
 } // namespace servo_control
+
+// Register this component so it can be loaded into a component container
+RCLCPP_COMPONENTS_REGISTER_NODE(servo_control::ServoControlLifecycleNode)

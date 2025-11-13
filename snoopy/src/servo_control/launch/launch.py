@@ -20,7 +20,7 @@ def generate_launch_description():
         composable_node_descriptions=[
             ComposableNode(
                 package=pkg_name,
-                plugin='ServoControlLifecycleNode',
+                plugin='servo_control::ServoControlLifecycleNode',
                 name='servo_control_node',
                 namespace='',
                 parameters=[params_file],
