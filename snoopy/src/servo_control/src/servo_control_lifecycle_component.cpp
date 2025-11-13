@@ -14,6 +14,11 @@ namespace servo_control
         RCLCPP_INFO(get_logger(), "Configuring servo...");
 
         this->load_params();
+        this->init_subsribers();
+
+        timer_ = this->create_wall_timer(
+            std::chrono::milliseconds(50),
+            std::bind(&ServoControlLifecycleNode::timer_callback, this));
 
         return CallbackReturn::SUCCESS;
     }
@@ -29,12 +34,24 @@ namespace servo_control
     {
         RCLCPP_INFO(get_logger(), "Deactivating servo...");
 
+        if (timer_)
+        {
+            timer_->cancel();
+            timer_.reset();
+        }
+
         return CallbackReturn::SUCCESS;
     }
 
     CallbackReturn ServoControlLifecycleNode::on_cleanup(const rclcpp_lifecycle::State &)
     {
         RCLCPP_INFO(get_logger(), "Cleaning up servo node...");
+
+        if (timer_)
+        {
+            timer_->cancel();
+            timer_.reset();
+        }
 
         return CallbackReturn::SUCCESS;
     }
@@ -44,6 +61,17 @@ namespace servo_control
         RCLCPP_INFO(get_logger(), "Shutting down from state: %s", state.label().c_str());
 
         return CallbackReturn::SUCCESS;
+    }
+
+    void ServoControlLifecylceNode::init_subscribers()
+    {
+        joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
+            "joint_states",
+            10,
+            [this](const sensor_msgs::msg::JointState::SharedPtr msg)
+            {
+                latest_joint_state_ = *msg;
+            });
     }
 
     void ServoControlLifecycleNode::load_params()
@@ -65,13 +93,9 @@ namespace servo_control
         this->get_parameter("pins", pins_);
         this->get_parameter("neutral_angles", neutral_angles_);
         this->get_parameter("servo_multipliers", servo_multipliers_);
-
-        // --- Logging for verification ---
-        RCLCPP_INFO(get_logger(), "Loaded scalar params: min_pwm=%d, mid_pwm=%d, max_pwm=%d",
-                    min_pwm_, mid_pwm_, max_pwm_);
     }
 
-    void ServoControlLifecycleNode::update_servo()
+    void ServoControlLifecycleNode::timer_callback()
     {
     }
 
