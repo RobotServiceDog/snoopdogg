@@ -18,8 +18,8 @@
   <depend>rclcpp_components</depend>
   <depend>lifecycle_msgs</depend>
   <depend>std_msgs</depend>
-
-  <!-- External libraries -->
+  <depend>sensor_msgs</depend>
+  <depend>comm_utils</depend>
 
   <!-- Testing -->
   <test_depend>ament_lint_auto</test_depend>

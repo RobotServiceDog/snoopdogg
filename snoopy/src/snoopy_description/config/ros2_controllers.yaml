@@ -57,3 +57,18 @@ snoopy_position_controller:
       - RH_HIP_JOINT
       - RH_THIGH_JOINT
       - RH_THIGH_FOOT_JOINT
+    command_interfaces: ["position"]
+
+    gains:
+      LF_HIP_JOINT: 5.0
+      LF_THIGH_JOINT: 5.0
+      LF_THIGH_FOOT_JOINT: 5.0
+      RF_HIP_JOINT: 5.0
+      RF_THIGH_JOINT: 5.0
+      RF_THIGH_FOOT_JOINT: 5.0
+      LH_HIP_JOINT: 5.0
+      LH_THIGH_JOINT: 5.0
+      LH_THIGH_FOOT_JOINT: 5.0
+      RH_HIP_JOINT: 5.0
+      RH_THIGH_JOINT: 5.0
+      RH_THIGH_FOOT_JOINT: 5.0

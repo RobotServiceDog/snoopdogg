@@ -7,6 +7,8 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(comm_utils REQUIRED)
 
 # --- include path ---
 include_directories(include)
@@ -16,7 +18,7 @@ add_library(inverse_kinematics_lifecycle_component SHARED
   src/inverse_kinematics_lifecycle_component.cpp
 )
 ament_target_dependencies(inverse_kinematics_lifecycle_component
-  rclcpp rclcpp_lifecycle rclcpp_components std_msgs
+  rclcpp rclcpp_lifecycle rclcpp_components std_msgs sensor_msgs comm_utils
 )
 
 # register the plugin
