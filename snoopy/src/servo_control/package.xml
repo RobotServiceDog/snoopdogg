@@ -19,7 +19,8 @@
   <depend>lifecycle_msgs</depend>
   <depend>std_msgs</depend>
 
-  <depend>generate_parameter_library</depend>
+  <build_depend>generate_parameter_library</build_depend>
+  <exec_depend>generate_parameter_library</exec_depend>
 
   <!-- External libraries -->
   <exec_depend>pigpio</exec_depend>

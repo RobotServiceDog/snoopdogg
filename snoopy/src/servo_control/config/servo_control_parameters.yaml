@@ -1,0 +1,9 @@
+parameters:
+  servo_speed:
+    type: double
+    default_value: 1.0
+    description: Max servo speed in rad/s
+  servo_torque:
+    type: double
+    default_value: 0.5
+    description: Max torque in Nm

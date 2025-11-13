@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-rosdep python3-argcomplete ccache \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     libpigpiod-if-dev libpigpiod-if2-1 pigpio-tools \
+    ros-${ROS_DISTRO}-generate-parameter-library \
  && rm -rf /var/lib/apt/lists/*
 
 # Gazebo simulation
