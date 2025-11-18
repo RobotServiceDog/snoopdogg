@@ -35,8 +35,8 @@ struct IK_Config
     // Servo angle offsets for different environments
     const double sim_theta_2_offset = -0.1784;
     const double sim_theta_3_offset = 0.2617;
-    const double real_theta_2_offset = 0.0;      // TODO: find real offsets
-    const double real_theta_3_offset = 0.0;;     // TODO: find real offsets
+    const double real_theta_2_offset = 1.0647;      // TODO: find real offsets
+    const double real_theta_3_offset = -1.4835;     // TODO: find real offsets
     std::map<std::pair<std::string, std::string>, double> servo_angle_offsets;
 
     // Offsets from hip to virtual hip joint
