@@ -10,6 +10,15 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(comm_utils REQUIRED)
 
+# Include pigpio library
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(PIGPIO REQUIRED pigpio)
+
+include_directories(${PIGPIO_INCLUDE_DIRS})
+link_directories(${PIGPIO_LIBRARY_DIRS})
+add_definitions(${PIGPIO_CFLAGS_OTHER})
+
+
 include_directories(include)
 
 # Component library
@@ -21,8 +30,29 @@ ament_target_dependencies(servo_control_lifecycle_component
   rclcpp rclcpp_lifecycle rclcpp_components std_msgs
 )
 
+target_link_libraries(hardware_interface ${PIGPIO_LIBRARIES})
+
 rclcpp_components_register_nodes(servo_control_lifecycle_component "servo_control::ServoControlLifecycleNode")
 
+
+# Hardware Interface library
+add_library(hardware_interface SHARED
+  src/hardware_interface.cpp
+)
+
+ament_target_dependencies(hardware_interface
+  rclcpp rclcpp_lifecycle sensor_msgs comm_utils
+)
+
+target_include_directories(hardware_interface PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+# Link hardware interface into component
+target_link_libraries(servo_control_lifecycle_component
+  hardware_interface
+)
 
 # --- install headers ---
 install(DIRECTORY include/
