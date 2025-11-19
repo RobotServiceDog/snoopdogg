@@ -21,11 +21,6 @@
   <depend>sensor_msgs</depend>
   <depend>comm_utils</depend>
 
-
-  <!-- External libraries -->
-  <exec_depend>pigpio</exec_depend>
-  <exec_depend>libpigpiod-if2-1</exec_depend>
-
   <!-- Testing -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

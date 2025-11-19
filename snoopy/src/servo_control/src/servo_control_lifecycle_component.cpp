@@ -16,8 +16,18 @@ namespace servo_control
         this->load_params();
         this->init_subsribers();
 
+        try
+        {
+            hardware_interface_ = std::make_unique<HardwareInterface>();
+        }
+        catch (const std::exception &e)
+        {
+            RCLCPP_ERROR(get_logger(), "HardwareInterface init failed: %s", e.what());
+            return CallbackReturn::FAILURE;
+        }
+
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(50),
+            std::chrono::milliseconds(20),
             std::bind(&ServoControlLifecycleNode::timer_callback, this));
 
         return CallbackReturn::SUCCESS;
@@ -34,11 +44,7 @@ namespace servo_control
     {
         RCLCPP_INFO(get_logger(), "Deactivating servo...");
 
-        if (timer_)
-        {
-            timer_->cancel();
-            timer_.reset();
-        }
+        timer_->cancel();
 
         return CallbackReturn::SUCCESS;
     }
@@ -47,11 +53,8 @@ namespace servo_control
     {
         RCLCPP_INFO(get_logger(), "Cleaning up servo node...");
 
-        if (timer_)
-        {
-            timer_->cancel();
-            timer_.reset();
-        }
+        timer_.reset();
+        hardware_interface_.reset();
 
         return CallbackReturn::SUCCESS;
     }
@@ -60,10 +63,11 @@ namespace servo_control
     {
         RCLCPP_INFO(get_logger(), "Shutting down from state: %s", state.label().c_str());
 
+        hardware_interface_.reset();
         return CallbackReturn::SUCCESS;
     }
 
-    void ServoControlLifecylceNode::init_subscribers()
+    void ServoControlLifecycleNode::init_subscribers()
     {
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
             "joint_states",
@@ -86,17 +90,43 @@ namespace servo_control
         this->get_parameter("max_pwm", max_pwm_);
 
         // --- Pins ---
-        this->declare_parameter("pins", std::vector<int>{});
-        this->declare_parameter("neutral_angles", std::vector<int>{});
-        this->declare_parameter("servo_multipliers", std::vector<int>{});
-
         this->get_parameter("pins", pins_);
         this->get_parameter("neutral_angles", neutral_angles_);
         this->get_parameter("servo_multipliers", servo_multipliers_);
+
+        // reshape → 2D arrays
+        pins_.resize(NUM_AXES, std::vector<int>(NUM_LEGS));
+        neutral_angles_.resize(NUM_AXES, std::vector<double>(NUM_LEGS));
+        servo_multipliers_.resize(NUM_AXES, std::vector<double>(NUM_LEGS));
+
+        for (int axis = 0; axis < NUM_AXES; axis++)
+        {
+            for (int leg = 0; leg < NUM_LEGS; leg++)
+            {
+                int idx = axis * NUM_LEGS + leg;
+                
+                pins_[axis][leg] = pins_flat[idx];
+                neutral_angles_[axis][leg] = neutral_flat[idx];
+                servo_multipliers_[axis][leg] = mult_flat[idx];
+            }
+        }
+
+        RCLCPP_INFO(get_logger(), "Loaded servo parameters from YAML.");
     }
 
     void ServoControlLifecycleNode::timer_callback()
     {
+        if (!hardware_interface_)
+            return;
+
+        try
+        {
+            hardware_interface_->set_actuator_positions(latest_joint_state_.position);
+        }
+        catch (const std::exception &e)
+        {
+            RCLCPP_ERROR(get_logger(), "Servo command failed: %s", e.what());
+        }
     }
 
 } // namespace servo_control
