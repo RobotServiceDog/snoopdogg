@@ -30,3 +30,5 @@ class ServoParams:
     @property
     def neutral_angles(self):
         return self.neutral_angle_degrees * np.pi / 180.0  # Convert to radians
+    
+    # 0 0 0 0 0 0 0 0 0 0 0 0

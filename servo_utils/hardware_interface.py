@@ -45,6 +45,7 @@ class HardwareInterface:
         pwm_value = int(
             neutral_pwm + multiplier * micros_per_rad * (angle - neutral_angle)
         )
+        print (f"Axis {axis}, Leg {leg}: Angle {angle:.2f} rad -> PWM {pwm_value} µs")
         return pwm_value
 
     def initialize_pwm(self, pi, pwm_params):
