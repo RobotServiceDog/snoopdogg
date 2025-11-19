@@ -10,13 +10,19 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(comm_utils REQUIRED)
 
-# Include pigpio library
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(PIGPIO REQUIRED pigpio)
+# --- pigpiod_if2 (Option 2) ---
+find_library(PIGPIO_LIB
+  NAMES pigpiod_if2 pigpiod_if pigpio
+  PATHS /usr/lib /usr/local/lib
+)
 
-include_directories(${PIGPIO_INCLUDE_DIRS})
-link_directories(${PIGPIO_LIBRARY_DIRS})
-add_definitions(${PIGPIO_CFLAGS_OTHER})
+if(NOT PIGPIO_LIB)
+  message(FATAL_ERROR "pigpio library not found (pigpiod_if2 or pigpio)")
+endif()
+
+target_link_libraries(hardware_interface
+  ${PIGPIO_LIB}
+)
 
 
 include_directories(include)

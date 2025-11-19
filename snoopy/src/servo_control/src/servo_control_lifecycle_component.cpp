@@ -104,6 +104,7 @@ namespace servo_control
             for (int leg = 0; leg < NUM_LEGS; leg++)
             {
                 int idx = axis * NUM_LEGS + leg;
+                
                 pins_[axis][leg] = pins_flat[idx];
                 neutral_angles_[axis][leg] = neutral_flat[idx];
                 servo_multipliers_[axis][leg] = mult_flat[idx];
