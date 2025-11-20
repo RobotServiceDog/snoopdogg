@@ -15,8 +15,30 @@ class HardwareInterface:
         self.servo_params = ServoParams()
         self.initialize_pwm(self.pi, self.pwm_params)
 
+        
+    def check_angle_constraints(self, joint_angles):
+        """Checks if the provided joint angles satisfy all defined constraints."""
+        
+        for leg, axis_from, axis_to in self.servo_params.angle_constraints:
+            min_angle, max_angle, axis_delta = self.servo_params.angle_constraints[(leg, axis_from, axis_to)]
+            
+            # join_angles (radians) to degrees for comparison
+            angle_from = joint_angles[leg][axis_from]
+            angle_to = joint_angles[leg][axis_to] + axis_delta
+            
+            delta_angle = angle_to - angle_from
+            
+            if not (min_angle <= delta_angle <= max_angle):
+                raise ValueError(
+                    f"Constraint violation on leg {leg}, axes {axis_from}->{axis_to}: "
+                    f"Delta angle {delta_angle:.2f} rad not in [{min_angle:.2f} rad, {max_angle:.2f} rad]."
+                )
+
     def set_actuator_positions(self, joint_angles):
         """Sets the positions of all actuators based on the provided joint angles."""
+        
+        self.check_angle_constraints(joint_angles)
+        
         for leg in range(NUM_LEGS):
             for axis in range(NUM_AXES):
                 angle = joint_angles[leg][axis]

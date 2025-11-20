@@ -2,6 +2,10 @@
 # A runnable script that takes 12 joint angles (in degrees) via CLI input
 # and commands the hardware interface to set the servo positions.
 
+# Example commands:
+# 0 0 0 0 0 0 0 0 0 0 0 0
+# 0 0 -45 0 0 0 0 0 0 0 0 0
+
 import time
 import math
 import numpy as np
