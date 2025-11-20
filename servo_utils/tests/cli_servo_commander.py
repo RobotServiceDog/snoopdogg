@@ -28,7 +28,7 @@ def cli_servo_commander():
             try:
                 # Prompt for input
                 print(f"Enter {expected_count} joint angles (in degrees, space-separated):")
-                print(f"Order: Axis 0 (Legs 0-3) -> Axis 1 (Legs 0-3) -> Axis 2 (Legs 0-3).")
+                print(" i.e., Leg 0 (Axes 0-2), Leg 1 (Axes 0-2), Leg 2 (Axes 0-2), Leg 3 (Axes 0-2).")
                 
                 # Get user input
                 user_input = input("Angles: ")
@@ -46,10 +46,10 @@ def cli_servo_commander():
                     print(f"Error: Expected {expected_count} angles, but received {len(angles_deg_flat)}.")
                     continue
                 
-                # Convert to radians and reshape into the (NUM_AXES, NUM_LEGS) structure (3x4)
+                # Convert to radians and reshape into the (NUM_LEGS, NUM_AXES) structure (4x3)
                 # NumPy is used for efficient conversion and reshaping.
                 angles_rad_flat = np.radians(angles_deg_flat)
-                joint_angles_rad = angles_rad_flat.reshape((NUM_AXES, NUM_LEGS))
+                joint_angles_rad = angles_rad_flat.reshape((NUM_LEGS, NUM_AXES))
                 
                 # 3. Publish to the servo
                 hw_interface.set_actuator_positions(joint_angles_rad)

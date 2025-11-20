@@ -7,15 +7,14 @@ NUM_AXES = 3
 NUM_LEGS = 4
 
 class PWMParams:
-    def __init__(self):        
-        self.pins = np.array([[2, 14, 18, 23], [3, 15, 27, 24], [4, 17, 22, 25]])
+    def __init__(self):
+        self.pins = np.array([[2, 3, 4], [14, 15, 17], [18, 27, 22], [23, 24, 25]]) 
         self.freq = 250
 
 
 class ServoParams:
     def __init__(self):
         self.min_pwm = 680    # Minimum pulse width in microseconds
-        self.mid_pwm = 1500  # Middle position
         self.max_pwm = 2320   # Maximum pulse width in microseconds
         
         self.micros_per_rad = MICROS_PER_RAD  # Must be calibrated
@@ -24,7 +23,7 @@ class ServoParams:
         self.neutral_angle_degrees = NEUTRAL_ANGLE_DEGREES
 
         self.servo_multipliers = np.array(
-            [[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]]
+            [[1, -1, 1], [1, 1, -1], [1, -1, 1], [1, 1, -1]]
         )
 
     @property
