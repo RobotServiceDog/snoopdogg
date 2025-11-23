@@ -1,0 +1,27 @@
+inverse_kinematics_lifecycle_node:
+  ros__parameters:
+    joint_names:
+      - LF_HIP_JOINT
+      - LF_THIGH_JOINT
+      - LF_THIGH_FOOT_JOINT
+      - RF_HIP_JOINT
+      - RF_THIGH_JOINT
+      - RF_THIGH_FOOT_JOINT
+      - LH_HIP_JOINT
+      - LH_THIGH_JOINT
+      - LH_THIGH_FOOT_JOINT
+      - RH_HIP_JOINT
+      - RH_THIGH_JOINT
+      - RH_THIGH_FOOT_JOINT
+
+    sim_theta_2_offset: -0.1784
+    sim_theta_3_offset:  0.2617
+    real_theta_2_offset: 0.7854
+    real_theta_3_offset: 0.7854
+
+    hip_offset_x: 0.02735
+    hip_offset_z: 0.0012724
+
+    h:  0.029523
+    hu: 0.123522
+    hl: 0.11643

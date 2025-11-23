@@ -1,44 +1,18 @@
 
 #include "inverse_kinematics/inverse_kinematics_lifecycle_component.hpp"
 
-void InverseKinematicsLifecycleNode::leg_inverse_kinematics_(int leg_side_constant, double x_pos, double y_pos, double z_pos)
+void InverseKinematicsLifecycleNode::load_parameters_()
 {
-    // Write xyz wrt virtual hip joint
-    x_pos = x_pos - ik_config_.hip_offset_x;
-    z_pos = z_pos - ik_config_.hip_offset_z;
-    std::cout << "Target position wrt hip: (" << x_pos << ", " << y_pos << ", " << z_pos << ")" << std::endl;
-    
-    // Find theta1
-    double dyz = sqrt(pow(y_pos, 2) + pow(z_pos, 2));
-    double lyz = sqrt(pow(dyz, 2) - pow(ik_config_.h, 2));
-    double gamma_yz = -atan(y_pos/z_pos);
-    double gamma_h = -atan(ik_config_.h/lyz);
-    // leg_side_constant is +1 for left leg, -1 for right leg
-    double theta1 = gamma_yz + leg_side_constant * gamma_h;
-    std::cout << "theta1: " << theta1 << std::endl;
-    joint_angles_.push_back(theta1);
-
-    // Find theta3
-    double lxz = sqrt(pow(x_pos, 2) + pow(lyz, 2));
-    double n = (pow(lxz, 2) - pow(ik_config_.hu, 2) - pow(ik_config_.hl, 2)) / (2 * ik_config_.hu);
-    double arg_theta3 = std::clamp(n / ik_config_.hl, -1.0 + 1e-5, 1.0 - 1e-5);
-    double theta3 = -acos(arg_theta3) - ik_config_.servo_angle_offsets[{environment_, "theta_3"}];
-    std::cout << "offset: " << ik_config_.servo_angle_offsets[{environment_, "theta_3"}] << std::endl;
-    std::cout << "theta3 (raw): " << -acos(arg_theta3) << std::endl;
-    std::cout << "theta3: " << theta3 << std::endl;
-
-    // Find theta2
-    double alpha_xz = -atan(x_pos/lyz);
-    double arg_alpha_off = std::clamp((ik_config_.hu + n) / lxz, -1.0 + 1e-5, 1.0 - 1e-5);
-    double alpha_off = acos(arg_alpha_off);
-    double theta2 = alpha_xz + alpha_off - ik_config_.servo_angle_offsets[{environment_, "theta_2"}];
-    std::cout << "offset: " << ik_config_.servo_angle_offsets[{environment_, "theta_2"}] << std::endl;
-    std::cout << "theta2 (raw): " << alpha_xz + alpha_off << std::endl;
-    std::cout << "theta2: " << theta2 << std::endl;
-    joint_angles_.push_back(theta2);
-    joint_angles_.push_back(theta3);
-
-    std::cout << std::endl;
+    this->get_parameter("joint_names", ik_solver_.ik_config_.joint_names);
+    this->get_parameter("sim_theta_2_offset", ik_solver_.ik_config_.sim_theta_2_offset);
+    this->get_parameter("sim_theta_3_offset", ik_solver_.ik_config_.sim_theta_3_offset);
+    this->get_parameter("real_theta_2_offset", ik_solver_.ik_config_.real_theta_2_offset);
+    this->get_parameter("real_theta_3_offset", ik_solver_.ik_config_.real_theta_3_offset);
+    this->get_parameter("hip_offset_x", ik_solver_.ik_config_.hip_offset_x);
+    this->get_parameter("hip_offset_z", ik_solver_.ik_config_.hip_offset_z);
+    this->get_parameter("h", ik_solver_.ik_config_.h);
+    this->get_parameter("hu", ik_solver_.ik_config_.hu);
+    this->get_parameter("hl", ik_solver_.ik_config_.hl);
 }
 
 void InverseKinematicsLifecycleNode::leg_position_callback_(const comm_utils::msg::LegPosition::SharedPtr msg)
@@ -50,10 +24,14 @@ void InverseKinematicsLifecycleNode::leg_position_callback_(const comm_utils::ms
     environment_ = msg->env;
     foot_positions_ = msg->foot_position;
 
-    leg_inverse_kinematics_(msg->LEFT_LEG_CONSTANT, foot_positions_[0], foot_positions_[1], foot_positions_[2]);
-    leg_inverse_kinematics_(msg->RIGHT_LEG_CONSTANT, foot_positions_[3], foot_positions_[4], foot_positions_[5]);
-    leg_inverse_kinematics_(msg->LEFT_LEG_CONSTANT, foot_positions_[6], foot_positions_[7], foot_positions_[8]);
-    leg_inverse_kinematics_(msg->RIGHT_LEG_CONSTANT, foot_positions_[9], foot_positions_[10], foot_positions_[11]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->LEFT_LEG_CONSTANT, foot_positions_[0], foot_positions_[1], foot_positions_[2]);
+    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[0], joint_angles_[1], joint_angles_[2]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->RIGHT_LEG_CONSTANT, foot_positions_[3], foot_positions_[4], foot_positions_[5]);
+    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[3], joint_angles_[4], joint_angles_[5]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->LEFT_LEG_CONSTANT, foot_positions_[6], foot_positions_[7], foot_positions_[8]);
+    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[6], joint_angles_[7], joint_angles_[8]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->RIGHT_LEG_CONSTANT, foot_positions_[9], foot_positions_[10], foot_positions_[11]);
+    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[9], joint_angles_[10], joint_angles_[11]);
 
     // Publish joint states
     if (environment_ == "sim") {
@@ -72,12 +50,32 @@ InverseKinematicsLifecycleNode::InverseKinematicsLifecycleNode(const rclcpp::Nod
     : rclcpp_lifecycle::LifecycleNode("InverseKinematicsLifecycleNode", options)
 {
     RCLCPP_INFO(get_logger(), "InverseKinematicsLifecycleNode constructed (unconfigured).");
+
+    this->declare_parameter<std::vector<std::string>>("joint_names");
+    this->declare_parameter<double>("sim_theta_2_offset");
+    this->declare_parameter<double>("sim_theta_3_offset");
+    this->declare_parameter<double>("real_theta_2_offset");
+    this->declare_parameter<double>("real_theta_3_offset");
+    this->declare_parameter<double>("hip_offset_x");
+    this->declare_parameter<double>("hip_offset_z");
+    this->declare_parameter<double>("h");
+    this->declare_parameter<double>("hu");
+    this->declare_parameter<double>("hl");
+
 }
 
 CallbackReturn InverseKinematicsLifecycleNode::on_configure(const rclcpp_lifecycle::State &)
-{
+{   
+    ik_solver_ = InverseKinematics();
+
+    load_parameters_();
+    ik_solver_.ik_config_.servo_angle_offsets[{"sim", "theta_2"}] = ik_solver_.ik_config_.sim_theta_2_offset;
+    ik_solver_.ik_config_.servo_angle_offsets[{"sim", "theta_3"}] = ik_solver_.ik_config_.sim_theta_3_offset;
+    ik_solver_.ik_config_.servo_angle_offsets[{"real", "theta_2"}] = ik_solver_.ik_config_.real_theta_2_offset;
+    ik_solver_.ik_config_.servo_angle_offsets[{"real", "theta_3"}] = ik_solver_.ik_config_.real_theta_3_offset;
+
     joint_state_msg_ = sensor_msgs::msg::JointState();
-    joint_state_msg_.name = ik_config_.joint_names;
+    joint_state_msg_.name = ik_solver_.ik_config_.joint_names;
     sim_position_controller_msg_ = std_msgs::msg::Float64MultiArray();
 
     // Create publisher (Lifecycle-aware)
