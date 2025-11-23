@@ -1,4 +1,4 @@
-#include "inverse_kinematics/inverse_kinematics.hpp"
+#include "inverse_kinematics/leg_ik.hpp"
 
 InverseKinematics::InverseKinematics() = default;
 

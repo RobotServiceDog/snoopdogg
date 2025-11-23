@@ -3,7 +3,7 @@
 <package format="3">
   <name>comm_utils</name>
   <version>0.0.0</version>
-  <description>Package to save custome messages, services, and actions</description>
+  <description>Package to save custom messages, services, and actions</description>
   <maintainer email="ardavanalaei@gmail.com">Ardavan Alaei Fard</maintainer>
   <license>Apache-2.0</license>
 
