@@ -25,7 +25,7 @@ class ServoParams:
         self.micros_per_rad = MICROS_PER_RAD  # Must be calibrated
 
         # The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
-        self.neutral_angle = NEUTRAL_ANGLE_DEGREES * np.pi / 180.0  # Convert to radians
+        self.neutral_angles = NEUTRAL_ANGLE_DEGREES * np.pi / 180.0  # Convert to radians
 
         self.servo_multipliers = SERVO_MULTIPLIERS
         
