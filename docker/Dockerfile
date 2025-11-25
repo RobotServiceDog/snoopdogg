@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-rosdep python3-argcomplete ccache \
     ros-humble-rmw-cyclonedds-cpp \
     libpigpiod-if-dev libpigpiod-if2-1 pigpio-tools \
+    libeigen3-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # Gazebo simulation
