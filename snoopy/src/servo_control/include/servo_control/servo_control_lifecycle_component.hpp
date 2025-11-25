@@ -26,14 +26,15 @@ namespace servo_control
         CallbackReturn on_shutdown(const rclcpp_lifecycle::State &state) override;
 
     private:
+        void init_subscribers();
         void timer_callback();
         void load_params();
         void update_servo();
 
         rclcpp::TimerBase::SharedPtr timer_;
-        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub;
+        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
+        sensor_msgs::msg::JointState current_joint_state_;
 
-        sensor_msgs::msg::JointState current_joint_state;
         // Parameters
         std::vector<int64_t> pins_;
         std::vector<int64_t> neutral_angles_;
@@ -42,6 +43,9 @@ namespace servo_control
         int64_t min_pwm_;
         int64_t mid_pwm_;
         int64_t max_pwm_;
+
+        // Hardware Interface
+        std::unique_ptr<HardwareInterface> hardware_interface_;
     };
 
 } // namespace servo_control

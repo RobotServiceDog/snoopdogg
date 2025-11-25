@@ -4,7 +4,12 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+
+#ifdef PI
+
 #include <pigpiod_if2.h>
+
+#endif
 
 // Replace with your actual config values / include files
 

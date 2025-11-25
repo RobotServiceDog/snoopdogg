@@ -14,7 +14,7 @@ namespace servo_control
         RCLCPP_INFO(get_logger(), "Configuring servo...");
 
         this->load_params();
-        this->init_subsribers();
+        this->init_subscribers();
 
         try
         {
@@ -74,7 +74,7 @@ namespace servo_control
             10,
             [this](const sensor_msgs::msg::JointState::SharedPtr msg)
             {
-                latest_joint_state_ = *msg;
+                current_joint_state_ = *msg;
             });
     }
 
