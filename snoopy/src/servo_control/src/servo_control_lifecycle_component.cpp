@@ -14,7 +14,7 @@ namespace servo_control
         RCLCPP_INFO(get_logger(), "Configuring servo...");
 
         this->load_params();
-        this->init_subsribers();
+        this->init_subscribers();
 
         try
         {
@@ -74,42 +74,14 @@ namespace servo_control
             10,
             [this](const sensor_msgs::msg::JointState::SharedPtr msg)
             {
-                latest_joint_state_ = *msg;
+                current_joint_state_ = *msg;
             });
     }
 
     void ServoControlLifecycleNode::load_params()
     {
-        // --- PWMs ---
-        this->declare_parameter("min_pwm", 680);
-        this->declare_parameter("mid_pwm", 1500);
-        this->declare_parameter("max_pwm", 232);
-
-        this->get_parameter("min_pwm", min_pwm_);
-        this->get_parameter("mid_pwm", mid_pwm_);
-        this->get_parameter("max_pwm", max_pwm_);
-
-        // --- Pins ---
-        this->get_parameter("pins", pins_);
-        this->get_parameter("neutral_angles", neutral_angles_);
-        this->get_parameter("servo_multipliers", servo_multipliers_);
-
-        // reshape → 2D arrays
-        pins_.resize(NUM_AXES, std::vector<int>(NUM_LEGS));
-        neutral_angles_.resize(NUM_AXES, std::vector<double>(NUM_LEGS));
-        servo_multipliers_.resize(NUM_AXES, std::vector<double>(NUM_LEGS));
-
-        for (int axis = 0; axis < NUM_AXES; axis++)
-        {
-            for (int leg = 0; leg < NUM_LEGS; leg++)
-            {
-                int idx = axis * NUM_LEGS + leg;
-                
-                pins_[axis][leg] = pins_flat[idx];
-                neutral_angles_[axis][leg] = neutral_flat[idx];
-                servo_multipliers_[axis][leg] = mult_flat[idx];
-            }
-        }
+        auto param_listener = std::make_shared<ParamListener>(this->shared_from_this());
+        auto params = param_listener->get_params();
 
         RCLCPP_INFO(get_logger(), "Loaded servo parameters from YAML.");
     }
@@ -121,7 +93,7 @@ namespace servo_control
 
         try
         {
-            hardware_interface_->set_actuator_positions(latest_joint_state_.position);
+            hardware_interface_->set_actuator_positions(current_joint_state_.position);
         }
         catch (const std::exception &e)
         {
