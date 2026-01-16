@@ -21,7 +21,7 @@
   <xacro:property name="joint_lower_limit" value="-3.14" />
   <xacro:property name="joint_upper_limit" value="3.14" />
   <xacro:property name="joint_effort_limit" value="500" />
-  <xacro:property name="joint_velocity_limit" value="2.5" />
+  <xacro:property name="joint_velocity_limit" value="30" />
   <xacro:property name="joint_damping" value="0.01" />
   <xacro:property name="joint_friction" value="0.01" />
 

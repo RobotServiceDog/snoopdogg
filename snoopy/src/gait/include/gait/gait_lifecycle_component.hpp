@@ -4,6 +4,7 @@
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
 #include "comm_utils/msg/leg_position.hpp"
+#include <geometry_msgs/msg/vector3.hpp>
 
 #include "gait/scheduler.hpp"
 #include "gait/foot_traj.hpp"
@@ -53,5 +54,8 @@ private:
     // neutral footholds (4 legs: LF, RF, LH, RH)
     std::vector<Eigen::Vector3d> neutral_foot_positions_;
 
+    void v_des_callback_(const geometry_msgs::msg::Vector3::SharedPtr msg);
+
     rclcpp_lifecycle::LifecyclePublisher<comm_utils::msg::LegPosition>::SharedPtr leg_position_pub_;
+    rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr v_des_sub_;
 };

@@ -37,7 +37,7 @@ joint_state_broadcaster:
 # --- 2. POSITION CONTROLLER CONFIGURATION ---
 snoopy_position_controller:
   ros__parameters:
-    publish_rate: 50.0  # Optional
+    publish_rate: 500.0  # Optional
 
     # List the joints the position controller will send commands to.
     joints:

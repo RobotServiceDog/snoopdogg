@@ -9,10 +9,10 @@ GaitLifecycleNode::GaitLifecycleNode(const rclcpp::NodeOptions &options)
 void GaitLifecycleNode::load_parameters_()
 {
     // Gait params
-    stride_time_  = this->declare_parameter<double>("stride_time", 2.0);
-    duty_factor_  = this->declare_parameter<double>("duty_factor", 0.8);
-    swing_height_ = this->declare_parameter<double>("swing_height", 0.03);
-    control_rate_hz_ = this->declare_parameter<double>("control_rate_hz", 10.0);
+    stride_time_  = this->declare_parameter<double>("stride_time", 1.0);
+    duty_factor_  = this->declare_parameter<double>("duty_factor", 0.7);
+    swing_height_ = this->declare_parameter<double>("swing_height", 0.02);
+    control_rate_hz_ = this->declare_parameter<double>("control_rate_hz", 20.0);
 
     // Optional foot placement gain (kept in scheduler too)
     k_foot_placement_ = this->declare_parameter<double>("k_foot_placement", 0.05);
@@ -49,8 +49,20 @@ void GaitLifecycleNode::load_parameters_()
     RCLCPP_INFO(get_logger(), "Parameters loaded: stride_time=%.3f duty=%.3f swing_h=%.3f rate=%.1f",
                 stride_time_, duty_factor_, swing_height_, control_rate_hz_);
 
-    v_des_ = {0.1, 0.0, 0.0}; // default desired velocity: 0.1 m/s forward
+    // v_des_ = {0.2, 0.0, 0.0}; // default desired velocity: 0.1 m/s forward
 }
+
+void GaitLifecycleNode::v_des_callback_(const geometry_msgs::msg::Vector3::SharedPtr msg)
+{
+    v_des_.x() = msg->x;
+    v_des_.y() = msg->y;
+    v_des_.z() = msg->z;
+
+    RCLCPP_INFO(this->get_logger(),
+                "Updated v_des_: [%.3f, %.3f, %.3f]",
+                v_des_.x(), v_des_.y(), v_des_.z());
+}
+
 
 void GaitLifecycleNode::controlLoop_()
 {
@@ -112,6 +124,12 @@ CallbackReturn GaitLifecycleNode::on_configure(const rclcpp_lifecycle::State &)
     load_parameters_();
 
     leg_position_pub_ = this->create_publisher<comm_utils::msg::LegPosition>("leg_position_cmd", rclcpp::QoS(10));
+    v_des_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
+        "/velocity_desired",                         // topic name
+        10,                                          // QoS
+        std::bind(&GaitLifecycleNode::v_des_callback_, this, std::placeholders::_1)
+    );
+
 
     RCLCPP_INFO(get_logger(), "Configured.");
     return CallbackReturn::SUCCESS;

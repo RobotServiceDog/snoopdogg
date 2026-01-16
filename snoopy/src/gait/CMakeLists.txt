@@ -8,6 +8,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(comm_utils REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 # --- include path ---
@@ -30,7 +31,7 @@ add_library(gait_lifecycle_component SHARED
   src/gait_lifecycle_component.cpp
 )
 ament_target_dependencies(gait_lifecycle_component
-  rclcpp rclcpp_lifecycle rclcpp_components std_msgs comm_utils Eigen3
+  rclcpp rclcpp_lifecycle rclcpp_components std_msgs comm_utils geometry_msgs Eigen3
 )
 
 # register the plugin

@@ -18,24 +18,25 @@ Eigen::Vector3d FootTrajectory::getTrajectory(
     double velocity)
 {
     double p = std::min(std::max(phase, 0.0), 1.0);
-    double displacement = velocity * (duty_factor * stride_time);
+    double displacement = velocity * stride_time;
 
     Eigen::Vector3d pos;
     Eigen::Vector3d start_pos = neutral_foot_pos;
     Eigen::Vector3d end_pos = neutral_foot_pos;
-    start_pos.x() += displacement/2.0;
-    end_pos.x() -= displacement/2.0;
+    start_pos.x() = start_pos.x() + displacement/2.0 + 0.01 * velocity;
+    end_pos.x() = end_pos.x() - displacement/2.0 + 0.01 * velocity;
 
     if (p <= duty_factor) {
+        double s = p / duty_factor;
         pos = start_pos;
-        pos.x() -= (p * displacement);
+        pos.x() -= (s * displacement);
     }
     else {
-        p = (p - duty_factor) / (1 - duty_factor);
+        double s = (p - duty_factor) / (1 - duty_factor);
         pos = end_pos;
-        pos.x() += (p * displacement);
-        height = 4 * height * p * (1 - p);
-        pos.z() += height;
+        pos.x() += (s * displacement);
+        double h = 4 * height * s * (1 - s);
+        pos.z() += h;
     }
 
    return pos;
