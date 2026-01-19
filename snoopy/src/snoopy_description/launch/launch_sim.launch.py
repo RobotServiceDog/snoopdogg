@@ -86,6 +86,17 @@ def generate_launch_description():
             on_exit=[joint_broad_spawner, position_controller_spawner],
         )
     )
+    
+    # --- 6. THE BRIDGE (CLOCK AND TOPICS) ---
+    # This is required for Ignition to send the /clock to ROS 2
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+        ],
+        output='screen'
+    )
 
     # Launch them all!
     return LaunchDescription([
@@ -95,6 +106,7 @@ def generate_launch_description():
         rsp,
         gazebo,
         spawn_entity,
+        bridge,
         
         delayed_controller_spawners,
     ])
