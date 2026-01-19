@@ -1,0 +1,15 @@
+# position.yaml
+header:
+  stamp:
+    sec: 0
+    nanosec: 0
+  frame_id: "base_link"
+env: "sim"
+foot_position: [0.0, 0.0, 0.2, 
+                 0.05, 0.0, 0.2, 
+                 0.0, 0.0, 0.2, 
+                 0.0, 0.0, 0.2]
+# foot_position: [0.0, 0.1, -0.2, 
+#                  0.0, -0.1, -0.2, 
+#                  0.0, 0.1, -0.2, 
+#                  0.0, -0.1, -0.2]

@@ -85,7 +85,7 @@ CallbackReturn InverseKinematicsLifecycleNode::on_configure(const rclcpp_lifecyc
         "/snoopy_position_controller/commands", rclcpp::QoS(10));
     // Create subscriber
     leg_position_sub_ = this->create_subscription<comm_utils::msg::LegPosition>(
-        "leg_position_cmd", 10,
+        "/leg_position_cmd", 10,
         std::bind(&InverseKinematicsLifecycleNode::leg_position_callback_, this, std::placeholders::_1)
     );
     
