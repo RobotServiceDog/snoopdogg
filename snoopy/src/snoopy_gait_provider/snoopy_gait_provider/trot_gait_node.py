@@ -13,14 +13,14 @@ class TrotGaitNode(Node):
         super().__init__('trot_gait_provider')
         
         # --- Parameters ---
-        self.step_frequency = self.declare_parameter('step_frequency', 2.0).value    
+        self.step_frequency = self.declare_parameter('step_frequency', 4.0).value    
         self.max_step_length = self.declare_parameter('max_step_length', 0.03).value 
         self.step_height = self.declare_parameter('step_height', 0.02).value       
         self.base_height = self.declare_parameter('base_height', 0.15).value       
         self.env = self.declare_parameter('env', 'sim').value             
         self.warmup_time = self.declare_parameter('warmup_time', 2.0).value        
         self.home_z = self.declare_parameter('home_z', 0.15).value       
-        self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.3).value     
+        self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.1).value     
 
         # --- Slew Rate / Smoothing Variables ---
         self.current_stride_x = 0.0
@@ -56,11 +56,10 @@ class TrotGaitNode(Node):
         t = (self.get_clock().now() - self.start_time).nanoseconds / 1e9
         phase = (2 * math.pi * freq * t + phase_offset) % (2 * math.pi)
 
+        x = (effective_length / 2) * math.cos(phase)
         if phase <= math.pi:
-            x = (effective_length / 2) * math.cos(phase)
             z = base_z 
         else:
-            x = (effective_length / 2) * math.cos(phase)
             z = base_z - height * math.sin(phase - math.pi)
 
         return x, 0.0425, z 
