@@ -25,6 +25,10 @@ ros2 topic lifecycle set /inverse_kinematics_lifecycle_node activate
 ```bash
 ros2 launch snoopy_gait_provider trot_gait_launch.py
 ```
+5. Run teleoperation to control the robot:
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
 
 ## Gait Details
 The trot gait alternates diagonal pairs of legs. The front-left and back-right legs move together, while the front-right and back-left legs move together. The gait cycle is defined by parameters such as step height, step length, and cycle duration.

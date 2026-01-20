@@ -21,10 +21,6 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'use_sim_time': LaunchConfiguration('use_sim_time'),
-            'step_frequency': 2.5,
-            'step_length': 0.03,
-            'step_height': 0.03,
-            'base_height': 0.15,
         }]
     )
 

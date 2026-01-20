@@ -97,6 +97,13 @@ def generate_launch_description():
         ],
         output='screen'
     )
+    
+    twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        parameters=[os.path.join(pkg_share_dir, 'config', 'twist_mux.yaml')],
+        remappings=[('/cmd_vel_out', '/cmd_vel')] # Map output to a standard name
+    )
 
     # Launch them all!
     return LaunchDescription([
@@ -107,6 +114,7 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         bridge,
+        twist_mux,
         
         delayed_controller_spawners,
     ])
