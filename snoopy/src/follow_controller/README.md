@@ -19,6 +19,14 @@ If you want to just launch the follow controller separately, you can do so by ru
 ros2 launch follow_controller follow_controller.launch.py
 ```
 
+### Give a Target Pose
+To set a target pose for the robot to follow, publish a `geometry_msgs/msg/PoseStamped` message to the `/goal_pose` topic. **Note, currently the goal pose must be in the `world` frame.**
+
+You can also use Rviz2 to set a 2D Nav Goal, which will publish to the `/goal_pose` topic.
+```bash
+rviz2
+```
+
 ### Controller Parameters
 The follow controller uses the following parameters, found in `/config/params.yaml`:
 ```yaml
