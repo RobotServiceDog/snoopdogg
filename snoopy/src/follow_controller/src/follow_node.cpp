@@ -12,6 +12,7 @@ FollowNode::FollowNode() : Node("follow_controller") {
     this->declare_parameter("kp_angular", 2.5);
     this->declare_parameter("kd_angular", 0.3);
     this->declare_parameter("goal_tolerance", 0.15);
+    this->declare_parameter("goal_angle_tolerance", 0.1);
     this->declare_parameter("max_linear_vel", 1.0);
     this->declare_parameter("max_angular_vel", 2.0);
 
@@ -21,6 +22,7 @@ FollowNode::FollowNode() : Node("follow_controller") {
     kp_angular_ = this->get_parameter("kp_angular").as_double();
     kd_angular_ = this->get_parameter("kd_angular").as_double();
     goal_tolerance_ = this->get_parameter("goal_tolerance").as_double();
+    goal_angle_tolerance_ = this->get_parameter("goal_angle_tolerance").as_double();
     max_linear_vel_ = this->get_parameter("max_linear_vel").as_double();
     max_angular_vel_ = this->get_parameter("max_angular_vel").as_double();
 
@@ -76,8 +78,16 @@ void FollowNode::control_loop() {
     // Distance error derivative using finite difference
     double distance_error_dot = (distance_error - last_dist_error_) / dt;
     
+    // ==================== Angular Error ====================
+    double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
+    double desired_yaw = std::atan2(dy, dx);
+    double angle_error = normalize_angle(desired_yaw - robot_yaw);
+    
+    // Angular error derivative using finite difference
+    double angle_error_dot = normalize_angle(angle_error - last_angle_error_) / dt;
+
     // ==================== Goal Reached Check ====================
-    if (distance_error < goal_tolerance_) {
+    if (distance_error < goal_tolerance_ && std::abs(angle_error) < goal_angle_tolerance_) {
         geometry_msgs::msg::Twist cmd;
         cmd.linear.x = 0.0;
         cmd.angular.z = 0.0;
@@ -87,14 +97,6 @@ void FollowNode::control_loop() {
         last_angle_error_ = 0.0;
         return;
     }
-    
-    // ==================== Angular Error ====================
-    double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
-    double desired_yaw = std::atan2(dy, dx);
-    double angle_error = normalize_angle(desired_yaw - robot_yaw);
-    
-    // Angular error derivative using finite difference
-    double angle_error_dot = normalize_angle(angle_error - last_angle_error_) / dt;
     
     // ==================== PD Control ====================
     // Linear velocity: PD controller on distance error

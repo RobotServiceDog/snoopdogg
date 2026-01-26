@@ -35,6 +35,7 @@ private:
     double last_angle_error_ = 0.0;
     double control_freq_;
     double goal_tolerance_;
+    double goal_angle_tolerance_;
     double max_linear_vel_;
     double max_angular_vel_;
 };

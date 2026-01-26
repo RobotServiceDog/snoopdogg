@@ -9,3 +9,4 @@ follow_controller:
     kp_angular: 2.0
     kd_angular: 0.05
     goal_tolerance: 0.2
+    goal_angle_tolerance: 0.1
