@@ -5,6 +5,7 @@ project(follow_controller)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 # Define the executable
 add_executable(follow_node 
@@ -18,6 +19,7 @@ target_include_directories(follow_node PUBLIC include)
 ament_target_dependencies(follow_node
   rclcpp
   geometry_msgs
+  nav_msgs
 )
 
 # Install include files

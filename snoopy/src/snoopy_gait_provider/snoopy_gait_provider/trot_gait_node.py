@@ -44,10 +44,9 @@ class TrotGaitNode(Node):
         base_z = self.base_height
         
         # Dynamic stride and turn math
-        # Turning: Left legs get less X, Right legs get more X (or vice versa)
-        # yaw_offset creates a differential speed between left and right sides
-        yaw_offset = self.current_yaw_rate * 0.05 # 0.05 is a tuning constant for turn radius
-        side_sign = 1.0 if is_left_side else -1.0
+        # Positive yaw_rate = turn left = left side slower, right side faster
+        yaw_offset = self.current_yaw_rate * 0.05  # tuning constant for turn radius
+        side_sign = -1.0 if is_left_side else 1.0
         effective_length = self.current_stride_x + (side_sign * yaw_offset)
         
         if self.start_time is None:

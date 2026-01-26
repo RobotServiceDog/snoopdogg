@@ -94,6 +94,8 @@ def generate_launch_description():
         executable='parameter_bridge',
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/odom@nav_msgs/msg/Odometry[ignition.msgs.Odometry',
+            '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V'
         ],
         output='screen'
     )
@@ -103,6 +105,18 @@ def generate_launch_description():
         executable='twist_mux',
         parameters=[os.path.join(pkg_share_dir, 'config', 'twist_mux.yaml')],
         remappings=[('/cmd_vel_out', '/cmd_vel')] # Map output to a standard name
+    )
+    
+    snoopy_gait = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('snoopy_gait_provider'),'launch','launch_gait.launch.py'
+        )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
+    follow_controller = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('follow_controller'),'launch','follow_controller.launch.py'
+        )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
     # Launch them all!
@@ -115,6 +129,8 @@ def generate_launch_description():
         spawn_entity,
         bridge,
         twist_mux,
+        snoopy_gait,
+        follow_controller,
         
         delayed_controller_spawners,
     ])
