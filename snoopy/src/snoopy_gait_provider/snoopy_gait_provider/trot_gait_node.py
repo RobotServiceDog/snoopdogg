@@ -58,8 +58,10 @@ class TrotGaitNode(Node):
 
         x = (effective_length / 2) * math.cos(phase)
         if phase <= math.pi:
+            # Stance phase
             z = base_z 
         else:
+            # Swing phase
             z = base_z - height * math.sin(phase - math.pi)
 
         return x, 0.0425, z 

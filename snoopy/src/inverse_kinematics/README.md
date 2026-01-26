@@ -12,12 +12,12 @@ ros2 launch snoopy_description launch_sim.launch.py
 ```
 2. Launch the IK package
 ```bash
-ros2 launch inverse_kinematics inverse_kinematics_launch.py
+ros2 launch inverse_kinematics launch.py
 ```
 3. Configure/Activate the IK package using the following:
 ```bash
-ros2 topic lifecycle set /inverse_kinematics_lifecycle_node configure
-ros2 topic lifecycle set /inverse_kinematics_lifecycle_node activate
+ros2 lifecycle set /inverse_kinematics_lifecycle_node configure
+ros2 lifecycle set /inverse_kinematics_lifecycle_node activate
 ```
 
 ### Send a position to the IK

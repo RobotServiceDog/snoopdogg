@@ -2,7 +2,7 @@
 
 This package provides a gait scheduler for a quadruped robot. Specifically, it uses the trot gait to generate leg position commands.
 
-Subscribes to: None
+Subscribes to: `/cmd_vel` (geometry_msgs/msg/Twist)
 
 Publishes to: `/leg_position_cmd` (comm_utils/msg/LegPosition)
 
@@ -14,16 +14,16 @@ ros2 launch snoopy_description launch_sim.launch.py
 ```
 2. Launch the IK package:
 ```bash
-ros2 launch inverse_kinematics inverse_kinematics_launch.py
+ros2 launch inverse_kinematics launch.py
 ```
 3. Configure/Activate the IK package using the following:
 ```bash
-ros2 topic lifecycle set /inverse_kinematics_lifecycle_node configure
-ros2 topic lifecycle set /inverse_kinematics_lifecycle_node activate
+ros2 lifecycle set /inverse_kinematics_lifecycle_node configure
+ros2 lifecycle set /inverse_kinematics_lifecycle_node activate
 ```
 4. Launch the gait provider:
 ```bash
-ros2 launch snoopy_gait_provider trot_gait_launch.py
+ros2 launch snoopy_gait_provider launch_gait.launch.py
 ```
 5. Run teleoperation to control the robot:
 ```bash
