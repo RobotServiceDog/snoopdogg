@@ -2,7 +2,7 @@
 # Controller configuration for Snoopy quadruped
 controller_manager:
   ros__parameters:
-    update_rate: 100  # Controller manager update rate (Hz)
+    update_rate: 500  # Controller manager update rate (Hz)
     
     # List all controllers to be loaded by the controller manager.
     # The spawner nodes will activate these.
