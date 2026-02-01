@@ -8,7 +8,7 @@
 #include "comm_utils/msg/leg_position.hpp"
 #include "std_msgs/msg/float64_multi_array.hpp"
 
-#include "inverse_kinematics/inverse_kinematics.hpp"
+#include "inverse_kinematics/leg_ik.hpp"
 
 using CallbackReturn =
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;

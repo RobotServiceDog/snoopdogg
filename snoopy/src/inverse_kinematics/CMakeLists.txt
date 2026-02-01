@@ -14,10 +14,10 @@ find_package(comm_utils REQUIRED)
 include_directories(include)
 
 # --- Build IK library (pure C++ math) ---
-add_library(inverse_kinematics_lib
-    src/inverse_kinematics.cpp
+add_library(leg_ik_lib
+    src/leg_ik.cpp
 )
-target_include_directories(inverse_kinematics_lib PUBLIC include)
+target_include_directories(leg_ik_lib PUBLIC include)
 
 # --- component as a SHARED library (PLUGIN) ---
 add_library(inverse_kinematics_lifecycle_component SHARED
@@ -31,7 +31,7 @@ ament_target_dependencies(inverse_kinematics_lifecycle_component
 rclcpp_components_register_nodes(inverse_kinematics_lifecycle_component "InverseKinematicsLifecycleNode")
 
 target_link_libraries(inverse_kinematics_lifecycle_component
-  inverse_kinematics_lib
+  leg_ik_lib
 )
 
 # --- install ---
@@ -41,7 +41,7 @@ install(
 )
 
 install(TARGETS
-  inverse_kinematics_lib
+  leg_ik_lib
   inverse_kinematics_lifecycle_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
