@@ -39,6 +39,18 @@
     </collision>
   </link>
 
+  <gazebo>
+    <plugin
+      filename="libignition-gazebo-odometry-publisher-system.so"
+      name="ignition::gazebo::systems::OdometryPublisher">
+      <odom_frame>world</odom_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <odom_topic>/odom</odom_topic>
+      <tf_topic>/tf</tf_topic>
+      <dimensions>2</dimensions>
+    </plugin>
+  </gazebo>
+
   <xacro:leg
     prefix="LF"
     parent_link="base_link"
@@ -50,7 +62,7 @@
     hip_mesh="LF_HIP.STL"
     thigh_mesh="LF_THIGH.STL"
     thigh_foot_mesh="LF_THIGH_FOOT.STL"
-    hip_visual_offset_rpy="0 0 0"
+    innertial_mirror="1"
   />
 
   <xacro:leg
@@ -64,7 +76,7 @@
     hip_mesh="RF_HIP.STL"
     thigh_mesh="RF_THIGH.STL"
     thigh_foot_mesh="RF_THIGH_FOOT.STL"
-    hip_visual_offset_rpy="0 0 0"
+    innertial_mirror="-1"
   />
 
   <xacro:leg
@@ -78,7 +90,7 @@
     hip_mesh="LH_HIP.STL"
     thigh_mesh="LH_THIGH.STL"
     thigh_foot_mesh="LH_THIGH_FOOT.STL"
-    hip_visual_offset_rpy="0 0 0"
+    innertial_mirror="1"
   />
 
   <xacro:leg
@@ -89,10 +101,10 @@
     hip_joint_rpy="0 0 0"
     thigh_joint_rpy="${thigh_joint_rpy_mirror_r}"
     foot_joint_rpy="${foot_joint_rpy_mirror_r}"
-    hip_mesh="LH_HIP.STL"
+    hip_mesh="RF_HIP.STL"
     thigh_mesh="RH_THIGH.STL"
     thigh_foot_mesh="RH_THIGH_FOOT.STL"
-    hip_visual_offset_rpy="3.14159 0 0"
+    innertial_mirror="-1"
   />
 
   <xacro:snoopy_ros2_control />
