@@ -44,13 +44,13 @@ namespace servo_control
 
     void HardwareInterface::stop_all()
     {
-        for (int axis = 0; axis < NUM_AXES; axis++)
-        {
-            for (int leg = 0; leg < NUM_LEGS; leg++)
-            {
-                // set_servo_pulsewidth(pi_handle, pwm_params.pins[axis][leg], 0);
-            }
-        }
+        // for (int axis = 0; axis < NUM_AXES; axis++)
+        // {
+        //     for (int leg = 0; leg < NUM_LEGS; leg++)
+        //     {
+        //         // set_servo_pulsewidth(pi_handle, pwm_params.pins[axis][leg], 0);
+        //     }
+        // }
     }
 
 } // namespace servo_control

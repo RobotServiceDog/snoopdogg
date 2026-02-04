@@ -9,23 +9,17 @@
   <maintainer email="shivansh.sonit@gmail.com">Shivansh Singh</maintainer>
   <license>MIT</license>
 
-  <!-- Build system -->
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <!-- Core ROS dependencies -->
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>rclcpp_components</depend>
+
   <depend>lifecycle_msgs</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
-  <depend>comm_utils</depend>
 
-  <depend>generate_parameter_library</depend>
-  
-  <!-- Testing -->
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <depend>comm_utils</depend>
 
   <export>
     <!-- Required for rclcpp_components to discover the plugin -->

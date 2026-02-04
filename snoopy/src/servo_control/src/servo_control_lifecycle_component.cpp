@@ -13,18 +13,17 @@ namespace servo_control
     {
         RCLCPP_INFO(get_logger(), "Configuring servo...");
 
-        this->load_params();
         this->init_subscribers();
 
-        try
-        {
-            hardware_interface_ = std::make_unique<HardwareInterface>();
-        }
-        catch (const std::exception &e)
-        {
-            RCLCPP_ERROR(get_logger(), "HardwareInterface init failed: %s", e.what());
-            return CallbackReturn::FAILURE;
-        }
+        // try
+        // {
+        //     hardware_interface_ = std::make_unique<HardwareInterface>();
+        // }
+        // catch (const std::exception &e)
+        // {
+        //     RCLCPP_ERROR(get_logger(), "HardwareInterface init failed: %s", e.what());
+        //     return CallbackReturn::FAILURE;
+        // }
 
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(20),
@@ -69,39 +68,33 @@ namespace servo_control
 
     void ServoControlLifecycleNode::init_subscribers()
     {
-        joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
+        joint_state_subscriber_ = this->create_subscription<sensor_msgs::msg::JointState>(
             "joint_states",
             10,
             [this](const sensor_msgs::msg::JointState::SharedPtr msg)
             {
                 current_joint_state_ = *msg;
+                RCLCPP_INFO(get_logger(), "Received joint state message with %zu joints", current_joint_state_.name.size());
             });
     }
 
-    void ServoControlLifecycleNode::load_params()
-    {
-        auto param_listener = std::make_shared<ParamListener>(this->shared_from_this());
-        auto params = param_listener->get_params();
-
-        RCLCPP_INFO(get_logger(), "Loaded servo parameters from YAML.");
-    }
 
     void ServoControlLifecycleNode::timer_callback()
     {
-        if (!hardware_interface_)
-            return;
+        RCLCPP_INFO(get_logger(), "Timer callback triggered.");
+        // if (!hardware_interface_)
+        //     return;
 
-        try
-        {
-            hardware_interface_->set_actuator_positions(current_joint_state_.position);
-        }
-        catch (const std::exception &e)
-        {
-            RCLCPP_ERROR(get_logger(), "Servo command failed: %s", e.what());
-        }
+        // try
+        // {
+        //     hardware_interface_->set_actuator_positions(current_joint_state_.position);
+        // }
+        // catch (const std::exception &e)
+        // {
+        //     RCLCPP_ERROR(get_logger(), "Servo command failed: %s", e.what());
+        // }
     }
 
 } // namespace servo_control
 
-// Register this component so it can be loaded into a component container
 RCLCPP_COMPONENTS_REGISTER_NODE(servo_control::ServoControlLifecycleNode)

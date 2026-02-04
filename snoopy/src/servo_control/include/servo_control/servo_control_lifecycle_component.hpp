@@ -9,8 +9,6 @@
 #include "std_msgs/msg/float64.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 
-#include "servo_control_parameters.hpp"
-
 using CallbackReturn =
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
@@ -31,21 +29,11 @@ namespace servo_control
     private:
         void init_subscribers();
         void timer_callback();
-        void load_params();
         void update_servo();
 
         rclcpp::TimerBase::SharedPtr timer_;
-        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
+        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber_;
         sensor_msgs::msg::JointState current_joint_state_;
-
-        // Parameters
-        std::vector<int64_t> pins_;
-        std::vector<int64_t> neutral_angles_;
-        std::vector<int64_t> servo_multipliers_;
-
-        int64_t min_pwm_;
-        int64_t mid_pwm_;
-        int64_t max_pwm_;
 
         // Hardware Interface
         std::unique_ptr<HardwareInterface> hardware_interface_;
