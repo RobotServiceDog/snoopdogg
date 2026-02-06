@@ -6,10 +6,23 @@ namespace servo_control
 
     HardwareInterface::HardwareInterface()
     {
+          // Initialize pigpio library
+            pi_handle = pigpio_start(NULL, NULL);
+            if (pi_handle < 0)
+            {
+                throw std::runtime_error("Failed to connect to pigpio daemon");
+            }
+
+        std::cout << "Pigpio initialized successfully." << std::endl;
+
+        // Initialize your PWM and servo parameters
+        initialize_pwm();
     }
 
     HardwareInterface::~HardwareInterface()
     {
+        stop_all();
+        pigpio_stop(pi_handle);
     }
 
     void HardwareInterface::initialize_pwm()
@@ -18,8 +31,10 @@ namespace servo_control
         {
             for (int leg = 0; leg < NUM_LEGS; leg++)
             {
-                // set_PWM_frequency(pi_handle, pwm_params.pins[axis][leg], pwm_params.freq);
-            }
+                int pin = pwm_params_.pins[leg][axis];  
+                // No frequency set in pigpiod_if2; just ensure initial pulse width
+                set_servo_pulsewidth(pi_handle, pin, 0);     
+           }
         }
 
         std::cout << "PWM frequencies initialized." << std::endl;
@@ -44,13 +59,15 @@ namespace servo_control
 
     void HardwareInterface::stop_all()
     {
-        // for (int axis = 0; axis < NUM_AXES; axis++)
-        // {
-        //     for (int leg = 0; leg < NUM_LEGS; leg++)
-        //     {
-        //         // set_servo_pulsewidth(pi_handle, pwm_params.pins[axis][leg], 0);
-        //     }
-        // }
+        for (int leg = 0; leg < NUM_LEGS; ++leg)
+        {
+            for (int axis = 0; axis < NUM_AXES; ++axis)
+            {
+                int pin = pwm_params_.pins[leg][axis];
+                set_servo_pulsewidth(pi_handle, pin, 0); // stop servo
+            }
+        }
+        std::cout << "All servos stopped." << std::endl;
     }
 
 } // namespace servo_control

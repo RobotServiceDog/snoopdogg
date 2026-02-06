@@ -60,7 +60,7 @@ namespace servo_control
                 {1, 1, -1}    // Leg 3 multipliers (Axis 0, 1, 2)
             };
         
-        } pwm_params;
+        } pwm_params_;
 
     };
 } // namespace servo_control
