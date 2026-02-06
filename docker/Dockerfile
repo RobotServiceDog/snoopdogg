@@ -12,6 +12,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpigpiod-if-dev libpigpiod-if2-1 pigpio-tools \
  && rm -rf /var/lib/apt/lists/*
 
+ # 2. Build pigpio from source
+RUN wget https://github.com/joan2937/pigpio/archive/master.zip -O pigpio.zip && \
+    unzip pigpio.zip && \
+    cd pigpio-master && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf pigpio-master pigpio.zip
+    
 # Gazebo simulation
 ARG SIM_MODE=OFF
 RUN if [ "$SIM_MODE" = "ON" ]; then \
