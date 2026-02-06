@@ -15,15 +15,15 @@ namespace servo_control
 
         this->init_subscribers();
 
-        // try
-        // {
-        //     hardware_interface_ = std::make_unique<HardwareInterface>();
-        // }
-        // catch (const std::exception &e)
-        // {
-        //     RCLCPP_ERROR(get_logger(), "HardwareInterface init failed: %s", e.what());
-        //     return CallbackReturn::FAILURE;
-        // }
+        try
+        {
+            hardware_interface_ = std::make_unique<HardwareInterface>();
+        }
+        catch (const std::exception &e)
+        {
+            RCLCPP_ERROR(get_logger(), "HardwareInterface init failed: %s", e.what());
+            return CallbackReturn::FAILURE;
+        }
 
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(20),
@@ -82,17 +82,17 @@ namespace servo_control
     void ServoControlLifecycleNode::timer_callback()
     {
         RCLCPP_INFO(get_logger(), "Timer callback triggered.");
-        // if (!hardware_interface_)
-        //     return;
+        if (!hardware_interface_)
+            return;
 
-        // try
-        // {
-        //     hardware_interface_->set_actuator_positions(current_joint_state_.position);
-        // }
-        // catch (const std::exception &e)
-        // {
-        //     RCLCPP_ERROR(get_logger(), "Servo command failed: %s", e.what());
-        // }
+        try
+        {
+            hardware_interface_->set_actuator_positions(current_joint_state_.position);
+        }
+        catch (const std::exception &e)
+        {
+            RCLCPP_ERROR(get_logger(), "Servo command failed: %s", e.what());
+        }
     }
 
 } // namespace servo_control
