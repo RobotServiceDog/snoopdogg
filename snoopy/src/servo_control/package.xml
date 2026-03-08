@@ -18,10 +18,7 @@
   <depend>rclcpp_components</depend>
   <depend>lifecycle_msgs</depend>
   <depend>std_msgs</depend>
-
-  <!-- External libraries -->
-  <exec_depend>pigpio</exec_depend>
-  <exec_depend>libpigpiod-if2-1</exec_depend>
+  <depend>sensor_msgs</depend>
 
   <!-- Testing -->
   <test_depend>ament_lint_auto</test_depend>

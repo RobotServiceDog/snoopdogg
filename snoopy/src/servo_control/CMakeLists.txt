@@ -6,6 +6,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 # --- include path ---
@@ -16,7 +17,7 @@ add_library(servo_control_lifecycle_component SHARED
   src/servo_control_lifecycle_component.cpp
 )
 ament_target_dependencies(servo_control_lifecycle_component
-  rclcpp rclcpp_lifecycle rclcpp_components std_msgs
+  rclcpp rclcpp_lifecycle rclcpp_components std_msgs sensor_msgs
 )
 
 # register the plugin

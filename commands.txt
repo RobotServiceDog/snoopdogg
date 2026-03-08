@@ -13,8 +13,20 @@ docker exec -it snoopdogg_container /bin/bash
 # Build Package
 colcon build --packages-select <package_name> --symlink-install
 
-# Source Build (do once at start/something funky goind)
+# Source Build (do once at start/something funky)
 source install/setup.bash
 
 # Launch ROS2 Component
 ros2 launch <package_name> launch.py
+
+# Grant permissions to docker
+newgrp docker
+
+# List available running lifecycle nodes
+ros2 lifecycle nodes 
+
+# Get current state of lifecycle node
+ros2 lifecycle get <lifecycle_node_name>
+
+# Transition to different state
+ros2 lifecycle set <lifecycle_node_name> <state>
