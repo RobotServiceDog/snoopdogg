@@ -11,8 +11,8 @@ import termios
 import tty
 
 # --- SERVO SPECIFICATIONS & LIMITS ---
-SERVO_PIN = 2               # The GPIO pin connected to the servo signal wire (BCM pin 2)
-REFRESH_RATE_HZ = 250       # The desired PWM refresh rate (frequency)
+SERVO_PIN = 10                # The GPIO pin connected to the servo signal wire (BCM pin 2)
+REFRESH_RATE_HZ = 300       # The desired PWM refresh rate (frequency)
 
 # Verified symmetrical limits
 CENTER_PULSE = 1500         # Symmetrical center pulse width (micro-seconds)
@@ -20,7 +20,7 @@ MIN_PULSE = 680             # The lowest non-binding pulse width.
 MAX_PULSE = 2320            # The highest non-binding pulse width.
 
 # --- CONTROL CONSTANTS ---
-ADJUSTMENT_STEP = 10        # Pulse width change per key press (micro-seconds)
+ADJUSTMENT_STEP = 50        # Pulse width change per key press (micro-seconds)
 CURRENT_PULSE = CENTER_PULSE # Start at center
 
 
@@ -83,7 +83,6 @@ try:
     print("Use 'w' to Increase Pulse Width (+10us) | (Max: 2320 us)")
     print("Use 's' to Decrease Pulse Width (-10us) | (Min: 680 us)")
     print("Press 'q' to Quit.")
-
     while True:
         # Get single key press
         key = getch()
@@ -111,21 +110,25 @@ try:
         if MIN_PULSE <= new_pulse <= MAX_PULSE:
             CURRENT_PULSE = new_pulse
             pi.set_servo_pulsewidth(SERVO_PIN, CURRENT_PULSE)
+
+            prev_pulse = CURRENT_PULSE
             
             # Print status update
             print(f"\rCurrent Pulse Width: {CURRENT_PULSE} us  ", end="", flush=True)
 
         elif new_pulse < MIN_PULSE:
             CURRENT_PULSE = MIN_PULSE
+            prev_pulse = CURRENT_PULSE
             print(f"\r[LIMIT] Cannot go below {MIN_PULSE} us. Current Pulse: {CURRENT_PULSE} us", end="", flush=True)
             pi.set_servo_pulsewidth(SERVO_PIN, CURRENT_PULSE) # Ensure it's set to the exact min
 
         elif new_pulse > MAX_PULSE:
             CURRENT_PULSE = MAX_PULSE
+            prev_pulse = CURRENT_PULSE
             print(f"\r[LIMIT] Cannot go above {MAX_PULSE} us. Current Pulse: {CURRENT_PULSE} us", end="", flush=True)
             pi.set_servo_pulsewidth(SERVO_PIN, CURRENT_PULSE) # Ensure it's set to the exact max
         
-        time.sleep(0.01) # Small delay to prevent keys from registering too fast
+        time.sleep(0.1) # Small delay to prevent keys from registering too fast
 
     stop_servo(pi)
         
