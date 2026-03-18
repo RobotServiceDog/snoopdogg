@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mutex>
 #include <string>
+#include <vector>
 
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>
@@ -31,7 +31,6 @@ class ApriltagDetectionLifecycleNode : public rclcpp_lifecycle::LifecycleNode
 
     private:
 
-        void apriltag_detection_callback();
         void image_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg);
         void camera_info_callback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg);
 
@@ -42,16 +41,18 @@ class ApriltagDetectionLifecycleNode : public rclcpp_lifecycle::LifecycleNode
         std::string camera_info_topic_;
         double tag_size_m_;
         int target_tag_id_;
-        int publish_period_ms_;
+        bool use_camera_info_topic_;
+        std::vector<double> camera_matrix_param_;
+        std::vector<double> distortion_coefficients_param_;
+        int calibration_width_;
+        int calibration_height_;
 
-        std::mutex data_mutex_;
-        sensor_msgs::msg::Image::ConstSharedPtr latest_image_;
         cv::Mat camera_matrix_;
         cv::Mat dist_coeffs_;
         bool has_camera_info_;
         cv::Ptr<cv::aruco::Dictionary> dictionary_;
+        rclcpp::CallbackGroup::SharedPtr callback_group_;
 
-        rclcpp::TimerBase::SharedPtr timer_;
         rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::Pose2D>::SharedPtr apriltag_pose_pub_;
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
         rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_sub_;

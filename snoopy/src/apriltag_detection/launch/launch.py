@@ -7,6 +7,7 @@ from launch_ros.descriptions import ComposableNode  # <-- correct import in Humb
 def generate_launch_description():
 
     pkg_name = 'apriltag_detection'
+    params_file = PathJoinSubstitution([FindPackageShare(pkg_name), 'config', 'apriltag_params.yaml'])
 
     container = ComposableNodeContainer(
         name='apriltag_detection_container',
