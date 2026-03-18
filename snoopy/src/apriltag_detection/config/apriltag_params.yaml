@@ -1,6 +1,6 @@
 /**:
   ros__parameters:
-    image_topic: /camera/image_raw
+    image_topic: /snoopy/camera/image
     camera_info_topic: /camera/camera_info
     tag_size_m: 0.1385
     target_tag_id: -1
