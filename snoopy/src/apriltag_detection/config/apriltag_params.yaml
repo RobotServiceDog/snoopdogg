@@ -2,7 +2,7 @@
   ros__parameters:
     image_topic: /camera/image_raw
     camera_info_topic: /camera/camera_info
-    tag_size_m: 0.162
+    tag_size_m: 0.1385
     target_tag_id: -1
 
     use_camera_info_topic: true
