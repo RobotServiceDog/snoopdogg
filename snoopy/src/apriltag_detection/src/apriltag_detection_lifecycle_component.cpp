@@ -1,6 +1,7 @@
 #include "apriltag_detection/apriltag_detection_lifecycle_component.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <vector>
 
@@ -13,6 +14,9 @@ ApriltagDetectionLifecycleNode::ApriltagDetectionLifecycleNode(const rclcpp::Nod
       camera_info_topic_("/camera/camera_info"),
       tag_size_m_(0.162),
       target_tag_id_(-1),
+      environment_(0),
+      camera_device_index_(0),
+      camera_read_period_ms_(100),
       use_camera_info_topic_(true),
       camera_matrix_param_({1242.86002, 0.0, 578.436600, 0.0, 1238.06090, 322.452739, 0.0, 0.0, 1.0}),
       distortion_coefficients_param_({-0.22467977, -0.14194663, -0.00117893, -0.00083476, 0.11091554}),
@@ -24,6 +28,9 @@ ApriltagDetectionLifecycleNode::ApriltagDetectionLifecycleNode(const rclcpp::Nod
     this->declare_parameter<std::string>("camera_info_topic", camera_info_topic_);
     this->declare_parameter<double>("tag_size_m", tag_size_m_);
     this->declare_parameter<int>("target_tag_id", target_tag_id_);
+    this->declare_parameter<int>("environment", environment_);
+    this->declare_parameter<int>("camera_device_index", camera_device_index_);
+    this->declare_parameter<int>("camera_read_period_ms", camera_read_period_ms_);
     this->declare_parameter<bool>("use_camera_info_topic", use_camera_info_topic_);
     this->declare_parameter<std::vector<double>>("camera_matrix", camera_matrix_param_);
     this->declare_parameter<std::vector<double>>(
@@ -40,14 +47,27 @@ CallbackReturn ApriltagDetectionLifecycleNode::on_configure(const rclcpp_lifecyc
     this->get_parameter("camera_info_topic", camera_info_topic_);
     this->get_parameter("tag_size_m", tag_size_m_);
     this->get_parameter("target_tag_id", target_tag_id_);
+    this->get_parameter("environment", environment_);
+    this->get_parameter("camera_device_index", camera_device_index_);
+    this->get_parameter("camera_read_period_ms", camera_read_period_ms_);
     this->get_parameter("use_camera_info_topic", use_camera_info_topic_);
     this->get_parameter("camera_matrix", camera_matrix_param_);
     this->get_parameter("distortion_coefficients", distortion_coefficients_param_);
     this->get_parameter("calibration_width", calibration_width_);
     this->get_parameter("calibration_height", calibration_height_);
 
+    if (environment_ != 0 && environment_ != 1) {
+        RCLCPP_ERROR(get_logger(), "Parameter environment must be 0 (sim) or 1 (real), got %d", environment_);
+        return CallbackReturn::FAILURE;
+    }
+
     if (tag_size_m_ <= 0.0) {
         RCLCPP_ERROR(get_logger(), "Parameter tag_size_m must be > 0.0, got %.4f", tag_size_m_);
+        return CallbackReturn::FAILURE;
+    }
+
+    if (camera_read_period_ms_ <= 0) {
+        RCLCPP_ERROR(get_logger(), "Parameter camera_read_period_ms must be > 0, got %d", camera_read_period_ms_);
         return CallbackReturn::FAILURE;
     }
 
@@ -89,24 +109,37 @@ CallbackReturn ApriltagDetectionLifecycleNode::on_configure(const rclcpp_lifecyc
     auto subscription_options = rclcpp::SubscriptionOptions();
     subscription_options.callback_group = callback_group_;
 
-    image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-        image_topic_, rclcpp::SensorDataQoS(),
-        std::bind(&ApriltagDetectionLifecycleNode::image_callback, this, std::placeholders::_1),
-        subscription_options);
-    if (use_camera_info_topic_) {
-        camera_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
-            camera_info_topic_, rclcpp::SensorDataQoS(),
-            std::bind(&ApriltagDetectionLifecycleNode::camera_info_callback, this, std::placeholders::_1),
+    if (environment_ == 0) {
+        image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
+            image_topic_, rclcpp::SensorDataQoS(),
+            std::bind(&ApriltagDetectionLifecycleNode::image_callback, this, std::placeholders::_1),
             subscription_options);
+
+        if (use_camera_info_topic_) {
+            camera_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
+                camera_info_topic_, rclcpp::SensorDataQoS(),
+                std::bind(&ApriltagDetectionLifecycleNode::camera_info_callback, this, std::placeholders::_1),
+                subscription_options);
+        } else {
+            camera_info_sub_.reset();
+        }
     } else {
+        image_sub_.reset();
         camera_info_sub_.reset();
+        if (use_camera_info_topic_) {
+            RCLCPP_WARN(
+                get_logger(),
+                "environment=1 (real) uses direct camera capture. camera_info_topic subscription is disabled.");
+        }
     }
 
     RCLCPP_INFO(
         get_logger(),
-        "Configuring detection. image_topic=%s camera_info_topic=%s use_camera_info_topic=%s "
-        "tag_size_m=%.3f target_tag_id=%d calibration_resolution=%dx%d",
-        image_topic_.c_str(), camera_info_topic_.c_str(),
+        "Configuring detection. environment=%d image_topic=%s camera_info_topic=%s "
+        "camera_device_index=%d camera_read_period_ms=%d "
+        "use_camera_info_topic=%s tag_size_m=%.3f target_tag_id=%d calibration_resolution=%dx%d",
+        environment_, image_topic_.c_str(), camera_info_topic_.c_str(),
+        camera_device_index_, camera_read_period_ms_,
         use_camera_info_topic_ ? "true" : "false", tag_size_m_, target_tag_id_,
         calibration_width_, calibration_height_);
 
@@ -117,13 +150,37 @@ CallbackReturn ApriltagDetectionLifecycleNode::on_activate(const rclcpp_lifecycl
 {
     apriltag_pose_pub_->on_activate();
 
-    RCLCPP_INFO(get_logger(), "Activating detection...");
+    if (environment_ == 1) {
+        if (!camera_capture_.open(camera_device_index_)) {
+            RCLCPP_ERROR(get_logger(), "Failed to open camera device index %d", camera_device_index_);
+            return CallbackReturn::FAILURE;
+        }
+
+        camera_capture_.set(cv::CAP_PROP_FRAME_WIDTH, static_cast<double>(calibration_width_));
+        camera_capture_.set(cv::CAP_PROP_FRAME_HEIGHT, static_cast<double>(calibration_height_));
+
+        camera_timer_ = this->create_wall_timer(
+            std::chrono::milliseconds(camera_read_period_ms_),
+            std::bind(&ApriltagDetectionLifecycleNode::real_detection_timer_callback, this));
+
+        RCLCPP_INFO(
+            get_logger(),
+            "Activating detection in real mode with direct camera capture (device=%d, period_ms=%d).",
+            camera_device_index_, camera_read_period_ms_);
+    } else {
+        RCLCPP_INFO(get_logger(), "Activating detection in simulation mode (ROS image subscription).");
+    }
 
     return CallbackReturn::SUCCESS;
 }
 
 CallbackReturn ApriltagDetectionLifecycleNode::on_deactivate(const rclcpp_lifecycle::State &)
 {
+    camera_timer_.reset();
+    if (camera_capture_.isOpened()) {
+        camera_capture_.release();
+    }
+
     apriltag_pose_pub_->on_deactivate();
 
     RCLCPP_INFO(get_logger(), "Deactivating detection...");
@@ -133,6 +190,11 @@ CallbackReturn ApriltagDetectionLifecycleNode::on_deactivate(const rclcpp_lifecy
 
 CallbackReturn ApriltagDetectionLifecycleNode::on_cleanup(const rclcpp_lifecycle::State &)
 {
+    camera_timer_.reset();
+    if (camera_capture_.isOpened()) {
+        camera_capture_.release();
+    }
+
     apriltag_pose_pub_.reset();
     image_sub_.reset();
     camera_info_sub_.reset();
@@ -156,31 +218,7 @@ CallbackReturn ApriltagDetectionLifecycleNode::on_shutdown(const rclcpp_lifecycl
 
 void ApriltagDetectionLifecycleNode::image_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-    if (!apriltag_pose_pub_ || !apriltag_pose_pub_->is_activated()) {
-        return;
-    }
-
-    if (static_cast<int>(msg->width) != calibration_width_ ||
-        static_cast<int>(msg->height) != calibration_height_) {
-        if (use_camera_info_topic_) {
-            RCLCPP_WARN_THROTTLE(
-                get_logger(), *get_clock(), 5000,
-                "Image resolution is %ux%u but static calibration is %dx%d. "
-                "CameraInfo should override these intrinsics if available.",
-                msg->width, msg->height, calibration_width_, calibration_height_);
-        } else {
-            RCLCPP_WARN_THROTTLE(
-                get_logger(), *get_clock(), 5000,
-                "Image resolution is %ux%u but calibration is %dx%d and "
-                "use_camera_info_topic=false. Pose estimation may be inaccurate.",
-                msg->width, msg->height, calibration_width_, calibration_height_);
-        }
-    }
-
-    if (!has_camera_info_ || camera_matrix_.empty() || dist_coeffs_.empty()) {
-        RCLCPP_WARN_THROTTLE(
-            get_logger(), *get_clock(), 2000, "Waiting for camera_info on %s",
-            camera_info_topic_.c_str());
+    if (environment_ != 0) {
         return;
     }
 
@@ -193,11 +231,100 @@ void ApriltagDetectionLifecycleNode::image_callback(const sensor_msgs::msg::Imag
         return;
     }
 
-    cv::Mat gray_image;
-    if (cv_ptr->image.channels() == 1) {
-        gray_image = cv_ptr->image;
+    process_frame_and_publish(cv_ptr->image);
+}
+
+void ApriltagDetectionLifecycleNode::camera_info_callback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg)
+{
+    if (environment_ != 0 || !use_camera_info_topic_) {
+        return;
+    }
+
+    camera_matrix_ = cv::Mat::eye(3, 3, CV_64F);
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            camera_matrix_.at<double>(row, col) = msg->k[row * 3 + col];
+        }
+    }
+
+    if (msg->d.empty()) {
+        dist_coeffs_ = cv::Mat::zeros(1, 5, CV_64F);
     } else {
-        cv::cvtColor(cv_ptr->image, gray_image, cv::COLOR_BGR2GRAY);
+        dist_coeffs_ = cv::Mat(msg->d).reshape(1, 1).clone();
+    }
+
+    has_camera_info_ = true;
+}
+
+void ApriltagDetectionLifecycleNode::real_detection_timer_callback()
+{
+    if (environment_ != 1) {
+        return;
+    }
+
+    if (!camera_capture_.isOpened()) {
+        if (!camera_capture_.open(camera_device_index_)) {
+            RCLCPP_WARN_THROTTLE(
+                get_logger(), *get_clock(), 2000,
+                "Failed to open camera device index %d", camera_device_index_);
+            return;
+        }
+        camera_capture_.set(cv::CAP_PROP_FRAME_WIDTH, static_cast<double>(calibration_width_));
+        camera_capture_.set(cv::CAP_PROP_FRAME_HEIGHT, static_cast<double>(calibration_height_));
+    }
+
+    cv::Mat frame;
+    if (!camera_capture_.read(frame) || frame.empty()) {
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 2000, "Failed to read frame from camera device %d", camera_device_index_);
+        return;
+    }
+
+    process_frame_and_publish(frame);
+}
+
+void ApriltagDetectionLifecycleNode::process_frame_and_publish(const cv::Mat &frame)
+{
+    if (!apriltag_pose_pub_ || !apriltag_pose_pub_->is_activated()) {
+        return;
+    }
+
+    if (frame.empty()) {
+        return;
+    }
+
+    if (frame.cols != calibration_width_ || frame.rows != calibration_height_) {
+        if (use_camera_info_topic_ && environment_ == 0) {
+            RCLCPP_WARN_THROTTLE(
+                get_logger(), *get_clock(), 5000,
+                "Image resolution is %dx%d but static calibration is %dx%d. "
+                "CameraInfo should override these intrinsics if available.",
+                frame.cols, frame.rows, calibration_width_, calibration_height_);
+        } else {
+            RCLCPP_WARN_THROTTLE(
+                get_logger(), *get_clock(), 5000,
+                "Image resolution is %dx%d but calibration is %dx%d. "
+                "Pose estimation may be inaccurate.",
+                frame.cols, frame.rows, calibration_width_, calibration_height_);
+        }
+    }
+
+    if (!has_camera_info_ || camera_matrix_.empty() || dist_coeffs_.empty()) {
+        RCLCPP_WARN_THROTTLE(
+            get_logger(), *get_clock(), 2000, "Waiting for camera_info or static calibration");
+        return;
+    }
+
+    cv::Mat gray_image;
+    if (frame.channels() == 1) {
+        gray_image = frame;
+    } else if (frame.channels() == 3) {
+        cv::cvtColor(frame, gray_image, cv::COLOR_BGR2GRAY);
+    } else if (frame.channels() == 4) {
+        cv::cvtColor(frame, gray_image, cv::COLOR_BGRA2GRAY);
+    } else {
+        RCLCPP_WARN_THROTTLE(
+            get_logger(), *get_clock(), 2000, "Unsupported image channel count: %d", frame.channels());
+        return;
     }
 
     std::vector<int> ids;
@@ -242,28 +369,6 @@ void ApriltagDetectionLifecycleNode::image_callback(const sensor_msgs::msg::Imag
     apriltag_pose_msg_.theta = heading;
 
     apriltag_pose_pub_->publish(apriltag_pose_msg_);
-}
-
-void ApriltagDetectionLifecycleNode::camera_info_callback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg)
-{
-    if (!use_camera_info_topic_) {
-        return;
-    }
-
-    camera_matrix_ = cv::Mat::eye(3, 3, CV_64F);
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
-            camera_matrix_.at<double>(row, col) = msg->k[row * 3 + col];
-        }
-    }
-
-    if (msg->d.empty()) {
-        dist_coeffs_ = cv::Mat::zeros(1, 5, CV_64F);
-    } else {
-        dist_coeffs_ = cv::Mat(msg->d).reshape(1, 1).clone();
-    }
-
-    has_camera_info_ = true;
 }
 
 // Register this component so it can be loaded into a component container

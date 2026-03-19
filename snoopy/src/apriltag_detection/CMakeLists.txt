@@ -9,7 +9,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
-find_package(OpenCV REQUIRED COMPONENTS core imgproc aruco calib3d)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc aruco calib3d videoio)
 
 # --- include path ---
 include_directories(include)

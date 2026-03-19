@@ -5,6 +5,7 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>
+#include <opencv2/videoio.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
@@ -33,6 +34,8 @@ class ApriltagDetectionLifecycleNode : public rclcpp_lifecycle::LifecycleNode
 
         void image_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg);
         void camera_info_callback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg);
+        void real_detection_timer_callback();
+        void process_frame_and_publish(const cv::Mat &frame);
 
         // ROS elements
         geometry_msgs::msg::Pose2D apriltag_pose_msg_;
@@ -41,6 +44,9 @@ class ApriltagDetectionLifecycleNode : public rclcpp_lifecycle::LifecycleNode
         std::string camera_info_topic_;
         double tag_size_m_;
         int target_tag_id_;
+        int environment_;
+        int camera_device_index_;
+        int camera_read_period_ms_;
         bool use_camera_info_topic_;
         std::vector<double> camera_matrix_param_;
         std::vector<double> distortion_coefficients_param_;
@@ -51,7 +57,9 @@ class ApriltagDetectionLifecycleNode : public rclcpp_lifecycle::LifecycleNode
         cv::Mat dist_coeffs_;
         bool has_camera_info_;
         cv::Ptr<cv::aruco::Dictionary> dictionary_;
+        cv::VideoCapture camera_capture_;
         rclcpp::CallbackGroup::SharedPtr callback_group_;
+        rclcpp::TimerBase::SharedPtr camera_timer_;
 
         rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::Pose2D>::SharedPtr apriltag_pose_pub_;
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
