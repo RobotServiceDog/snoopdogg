@@ -22,10 +22,15 @@ NUM_LEGS = 4
 # --- UDP SETTINGS ---
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5005
-PINS = [-1, -1, -1, -1, 2, 3, -1, -1, 9, 10, -1, -1]
-NEUTRAL_ANGLE_DEGREES = [0., 0., 0., 0., 45., 45., 45., 45., -45., -45., -45., -45.]
+# Converntion for servos: [LF_hip, LF_thigh, LF_knee, RF_hip, RF_thigh, RF_knee, LH_hip, LH_thigh, LH_knee, RH_hip, RH_thigh, RH_knee]
+# PINS = [2, 3, 4, 14, 15, 17, 18, 27, 22, 23, 24, 25]
+PINS = [-1, 3, 4, -1, 15, 17, -1, -1, -1, -1, -1, -1]
+# NEUTRAL_ANGLE_DEGREES = [0., 45., -45, 0., 45., -45, 0., 45., -45, 0., 45., -45,]
+NEUTRAL_ANGLE_DEGREES = [0., -10., 60, 0., -20., 70, 0., -10., 60, 0., -20., 70]
+START_ANGLE_DEGREES = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0]
+MULTIPLIERS = [1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1]
                 
-def send_servo_command(angle, index):
+def send_servo_command(angle, pin, index):
     """Converts a desired angle to PWM and sends the command to the servo."""
     pwm_value = angle_to_pwm(angle, index)
     
@@ -35,8 +40,8 @@ def send_servo_command(angle, index):
             f"Angle {angle} corresponding to PWM value {pwm_value} for leg {index} is out of bounds."
         )
     
-    print(f"Setting leg: {index} to pwm: {pwm_value} ")
-    pi.set_servo_pulsewidth(index, pwm_value)
+    print(f"Setting leg: {index} at pin {pin} to pwm: {pwm_value} ")
+    pi.set_servo_pulsewidth(pin, pwm_value)
     print("Success")
         
 def angle_to_pwm(angle, index):
@@ -45,7 +50,7 @@ def angle_to_pwm(angle, index):
 
     print(CENTER_PULSE, MICROS_PER_DEG, angle, neutral_angle)
     pwm_value = int(
-        CENTER_PULSE + MICROS_PER_DEG * (angle - neutral_angle)
+        CENTER_PULSE + MULTIPLIERS[index] * MICROS_PER_DEG * (angle + neutral_angle)
     )
     return pwm_value
 
@@ -65,6 +70,7 @@ try:
         if pin != -1:            
             print(f"{pin}: PWM frequency set to {pi.get_PWM_frequency(pin)} Hz.")
             pi.set_PWM_frequency(pin, REFRESH_RATE_HZ)
+            send_servo_command(START_ANGLE_DEGREES[i], pin, i)
         
     
     # 3. setting up UDP listener
@@ -84,8 +90,8 @@ try:
         print(f"Received from {addr}: {angles}")
         
         for i, angle in enumerate(angles):
-            if angles[i] != prev_angles[i] and PINS[i] != -1: 
-                send_servo_command(angle, PINS[i])
+            if angles[i] != prev_angles[i] and PINS[i] != -1:
+                send_servo_command(angle * 180 / np.pi, PINS[i], i)
 
         prev_angles = angles        
     # stop_servo(pi)

@@ -11,7 +11,7 @@ import termios
 import tty
 
 # --- SERVO SPECIFICATIONS & LIMITS ---
-SERVO_PIN = 10                # The GPIO pin connected to the servo signal wire (BCM pin 2)
+SERVO_PIN = 3              # The GPIO pin connected to the servo signal wire (BCM pin 2)
 REFRESH_RATE_HZ = 300       # The desired PWM refresh rate (frequency)
 
 # Verified symmetrical limits

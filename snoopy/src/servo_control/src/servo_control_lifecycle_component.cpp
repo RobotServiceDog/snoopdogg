@@ -11,21 +11,21 @@ CallbackReturn ServoControlLifecycleNode::on_configure(const rclcpp_lifecycle::S
 {
     RCLCPP_INFO(get_logger(), "Configuring servo...");
 
-    joint_state_msg_ = sensor_msgs::msg::JointState();
-    joint_angles_ = {0., 0., 0., 0., 45., 45., 45., 45., -45., -45., -45., -45.};
-    joint_state_msg_.position = joint_angles_;
+    // joint_state_msg_ = sensor_msgs::msg::JointState();
+    // joint_angles_ = {0., 0., 0., 0., 45., 45., 45., 45., -45., -45., -45., -45.};
+    // joint_state_msg_.position = joint_angles_;
 
 
     this->init_udp_socket();
     joint_state_subscriber_ = this->create_subscription<sensor_msgs::msg::JointState>(
-        "joint_states", 10,
+        "/joint_states", 10,
         std::bind(&ServoControlLifecycleNode::servo_callback, this, std::placeholders::_1)
     );
 
-    udp_timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(100),
-        std::bind(&ServoControlLifecycleNode::timer_callback, this)
-    );
+    // udp_timer_ = this->create_wall_timer(
+    //     std::chrono::milliseconds(100),
+    //     std::bind(&ServoControlLifecycleNode::timer_callback, this)
+    // );
     
     return CallbackReturn::SUCCESS;
 }
@@ -34,8 +34,7 @@ CallbackReturn ServoControlLifecycleNode::on_activate(const rclcpp_lifecycle::St
 {
     RCLCPP_INFO(get_logger(), "Activating servo...");
 
-    joint_state_subscriber_.reset();
-    udp_timer_->reset();
+    // udp_timer_->reset();
     
     return CallbackReturn::SUCCESS;
 }
@@ -45,7 +44,7 @@ CallbackReturn ServoControlLifecycleNode::on_deactivate(const rclcpp_lifecycle::
     RCLCPP_INFO(get_logger(), "Deactivating servo...");
 
     joint_state_subscriber_.reset();
-    udp_timer_->cancel();
+    // udp_timer_->cancel();
 
     close(sockfd_);
 
@@ -57,7 +56,7 @@ CallbackReturn ServoControlLifecycleNode::on_cleanup(const rclcpp_lifecycle::Sta
     RCLCPP_INFO(get_logger(), "Cleaning up servo node...");
 
     joint_state_subscriber_.reset();
-    udp_timer_.reset();
+    // udp_timer_.reset();
 
     close(sockfd_);
 
@@ -93,16 +92,13 @@ void ServoControlLifecycleNode::servo_callback(const sensor_msgs::msg::JointStat
 {
     RCLCPP_INFO(get_logger(), "Received JointState with %zu positions", msg->position.size());
     // Handle servo commands here
-}
 
-void ServoControlLifecycleNode::timer_callback()
-{
     std::string message = "Hello from C++ UDP\n";
 
     ssize_t sent_bytes = sendto(
         sockfd_,
-        joint_state_msg_.position.data(),
-        joint_state_msg_.position.size() * sizeof(double),
+        msg->position.data(),
+        msg->position.size() * sizeof(double),
         0,
         (const sockaddr*)&servaddr_,
         sizeof(servaddr_)
@@ -113,7 +109,28 @@ void ServoControlLifecycleNode::timer_callback()
     } else {
          RCLCPP_INFO(get_logger(), "Message sent.");
     }    
+
 }
+
+// void ServoControlLifecycleNode::timer_callback()
+// {
+//     std::string message = "Hello from C++ UDP\n";
+
+//     ssize_t sent_bytes = sendto(
+//         sockfd_,
+//         joint_state_msg_.position.data(),
+//         joint_state_msg_.position.size() * sizeof(double),
+//         0,
+//         (const sockaddr*)&servaddr_,
+//         sizeof(servaddr_)
+//     );
+
+//     if (sent_bytes < 0) {
+//         perror("sendto failed");
+//     } else {
+//          RCLCPP_INFO(get_logger(), "Message sent.");
+//     }    
+// }
 
 // Register this component so it can be loaded into a component container
 RCLCPP_COMPONENTS_REGISTER_NODE(ServoControlLifecycleNode)

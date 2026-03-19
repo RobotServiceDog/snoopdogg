@@ -17,7 +17,7 @@ class TrotGaitNode(Node):
         self.max_step_length = self.declare_parameter('max_step_length', 0.03).value 
         self.step_height = self.declare_parameter('step_height', 0.02).value       
         self.base_height = self.declare_parameter('base_height', 0.15).value       
-        self.env = self.declare_parameter('env', 'sim').value             
+        self.env = self.declare_parameter('env', 'real').value             
         self.warmup_time = self.declare_parameter('warmup_time', 2.0).value        
         self.home_z = self.declare_parameter('home_z', 0.15).value       
         self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.1).value     
@@ -121,6 +121,7 @@ class TrotGaitNode(Node):
     
     def cmd_vel_callback(self, msg):
         # We don't update current_stride directly; we set the target for the slew filter
+        print("Subscriber called")
         self.target_stride_x = min(max(msg.linear.x * 0.1, -self.max_step_length), self.max_step_length)
         self.target_yaw_rate = min(max(msg.angular.z, -self.max_angular_velocity), self.max_angular_velocity)
 

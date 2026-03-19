@@ -9,7 +9,7 @@ def generate_launch_description():
     # 1. Declare arguments (allows you to change these from the terminal)
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
-        default_value='true',
+        default_value='false',
         description='Use simulation (Gazebo) clock if true'
     )
 

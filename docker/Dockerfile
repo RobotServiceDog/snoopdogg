@@ -36,7 +36,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-xacro \
     ros-humble-teleop-twist-keyboard \
     && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libsm6 \
+    libxext6 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install opencv-python
 # Create non-root user (robust if UID/GID already exist)
 ARG DEVUSER=dev
 ARG UID=1000
