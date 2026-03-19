@@ -6,7 +6,8 @@
 #include <vector>
 
 #include <opencv2/imgproc.hpp>
-#include "cv_bridge/cv_bridge.hpp"
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/calib3d.hpp>
 
 ApriltagDetectionLifecycleNode::ApriltagDetectionLifecycleNode(const rclcpp::NodeOptions &options)
     : rclcpp_lifecycle::LifecycleNode("ApriltagDetectionLifecycleNode", options),
@@ -261,7 +262,7 @@ void ApriltagDetectionLifecycleNode::real_detection_timer_callback()
     if (environment_ != 1) {
         return;
     }
-
+    
     if (!camera_capture_.isOpened()) {
         if (!camera_capture_.open(camera_device_index_)) {
             RCLCPP_WARN_THROTTLE(
@@ -271,6 +272,7 @@ void ApriltagDetectionLifecycleNode::real_detection_timer_callback()
         }
         camera_capture_.set(cv::CAP_PROP_FRAME_WIDTH, static_cast<double>(calibration_width_));
         camera_capture_.set(cv::CAP_PROP_FRAME_HEIGHT, static_cast<double>(calibration_height_));
+        
     }
 
     cv::Mat frame;
@@ -367,6 +369,8 @@ void ApriltagDetectionLifecycleNode::process_frame_and_publish(const cv::Mat &fr
     apriltag_pose_msg_.x = tvecs.front()[0];
     apriltag_pose_msg_.y = tvecs.front()[2];  // Pose2D.y used for forward depth (z in camera frame).
     apriltag_pose_msg_.theta = heading;
+
+    printf("%f\n", apriltag_pose_msg_.y);
 
     apriltag_pose_pub_->publish(apriltag_pose_msg_);
 }
