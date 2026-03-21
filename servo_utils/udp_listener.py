@@ -12,7 +12,7 @@ REFRESH_RATE_HZ = 250       # The desired PWM refresh rate (frequency)
 # --- VERIFIED SYMMETRICAL LIMITS ---
 CENTER_PULSE = 1500         # Symmetrical center pulse width (micro-seconds)
 MIN_PULSE = 680             # The lowest non-binding pulse width.
-MAX_PULSE = 2320            # The highest non-binding pulse width.
+MAX_PULSE = 1900            # The highest non-binding pulse width.
 MICROS_PER_DEG = 11.3333
 
 # --- ROBOT CONSTANTS ---
@@ -23,10 +23,10 @@ NUM_LEGS = 4
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5005
 # Converntion for servos: [LF_hip, LF_thigh, LF_knee, RF_hip, RF_thigh, RF_knee, LH_hip, LH_thigh, LH_knee, RH_hip, RH_thigh, RH_knee]
-# PINS = [2, 3, 4, 14, 15, 17, 18, 27, 22, 23, 24, 25]
-PINS = [-1, 3, 4, -1, 15, 17, -1, -1, -1, -1, -1, -1]
-# NEUTRAL_ANGLE_DEGREES = [0., 45., -45, 0., 45., -45, 0., 45., -45, 0., 45., -45,]
-NEUTRAL_ANGLE_DEGREES = [0., -10., 60, 0., -20., 70, 0., -10., 60, 0., -20., 70]
+# PINS = [2,3, 4, 14, 15, 17, 18, 27, 22, 23, 24, 25]
+PINS = [-1, -1, -1, -1, 15, -1, -1, -1, -1, -1, -1, -1]
+NEUTRAL_ANGLE_DEGREES = [0., 45., -45, 0., -45., -45, 0., 45., -45, 0., 45., -45,]
+# NEUTRAL_ANGLE_DEGREES = [0., -10., 60, 0., -20., 70, 0., -10., 60, 0., -20., 70]
 START_ANGLE_DEGREES = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0]
 MULTIPLIERS = [1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1]
                 
@@ -50,7 +50,7 @@ def angle_to_pwm(angle, index):
 
     print(CENTER_PULSE, MICROS_PER_DEG, angle, neutral_angle)
     pwm_value = int(
-        CENTER_PULSE + MULTIPLIERS[index] * MICROS_PER_DEG * (angle + neutral_angle)
+        CENTER_PULSE + MULTIPLIERS[index] * MICROS_PER_DEG * (angle - neutral_angle)
     )
     return pwm_value
 
@@ -70,30 +70,30 @@ try:
         if pin != -1:            
             print(f"{pin}: PWM frequency set to {pi.get_PWM_frequency(pin)} Hz.")
             pi.set_PWM_frequency(pin, REFRESH_RATE_HZ)
-            send_servo_command(START_ANGLE_DEGREES[i], pin, i)
+            send_servo_command(NEUTRAL_ANGLE_DEGREES[i], pin, i)
         
     
-    # 3. setting up UDP listener
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((UDP_IP, UDP_PORT))
-    print(f"Listening on {UDP_IP}:{UDP_PORT}...")
+    # # 3. setting up UDP listener
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # sock.bind((UDP_IP, UDP_PORT))
+    # print(f"Listening on {UDP_IP}:{UDP_PORT}...")
 
-    # # --- Manual Control Loop ---
-    print("\n--- Servo Control (listening to software stack) ---")
+    # # # --- Manual Control Loop ---
+    # print("\n--- Servo Control (listening to software stack) ---")
 
-    prev_angles = [-1] * 12
-    while True:
-        data, addr = sock.recvfrom(1024) # buffer size    
+    # prev_angles = [-1] * 12
+    # while True:
+    #     data, addr = sock.recvfrom(1024) # buffer size    
 
-        angles = struct.unpack("12d", data)
+    #     angles = struct.unpack("12d", data)
 
-        print(f"Received from {addr}: {angles}")
+    #     print(f"Received from {addr}: {angles}")
         
-        for i, angle in enumerate(angles):
-            if angles[i] != prev_angles[i] and PINS[i] != -1:
-                send_servo_command(angle * 180 / np.pi, PINS[i], i)
+    #     for i, angle in enumerate(angles):
+    #         if angles[i] != prev_angles[i] and PINS[i] != -1:
+    #             send_servo_command(angle * 180 / np.pi, PINS[i], i)
 
-        prev_angles = angles        
+    #     prev_angles = angles        
     # stop_servo(pi)
         
 except Exception as e:
