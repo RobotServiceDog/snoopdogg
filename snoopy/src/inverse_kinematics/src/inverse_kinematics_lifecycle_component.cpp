@@ -34,16 +34,16 @@ void InverseKinematicsLifecycleNode::leg_position_callback_(const comm_utils::ms
     RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[9], joint_angles_[10], joint_angles_[11]);
 
     // Publish joint states
-    if (environment_ == "sim") {
-        sim_position_controller_msg_.data = joint_angles_;
-        sim_position_controller_pub_->publish(sim_position_controller_msg_);
-    }
-    else if (environment_ == "real") {
+    // if (environment_ == "sim") {
+    //     sim_position_controller_msg_.data = joint_angles_;
+    //     sim_position_controller_pub_->publish(sim_position_controller_msg_);
+    // }
+    // else if (environment_ == "real") {
         joint_state_msg_.header.stamp = msg->header.stamp;
         joint_state_msg_.position = joint_angles_;
 
         joint_state_pub_->publish(joint_state_msg_);
-    }
+    // }
 }
 
 InverseKinematicsLifecycleNode::InverseKinematicsLifecycleNode(const rclcpp::NodeOptions &options)
