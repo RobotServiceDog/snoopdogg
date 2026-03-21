@@ -1,11 +1,14 @@
 #include "follow_controller/follow_node.hpp"
 #include <cmath>
+#include <algorithm>
+#include "geometry_msgs/msg/vector3.hpp"
 
 FollowNode::FollowNode() : Node("follow_controller") {
     // Declare Parameters
     this->declare_parameter("target_topic", "/model/leader_sphere/pose");
     this->declare_parameter("odom_topic", "/odom");
     this->declare_parameter("cmd_topic", "/cmd_vel");
+    this->declare_parameter("error_topic", "/controller_error");
     this->declare_parameter("control_frequency", 50.0);
     this->declare_parameter("kp_linear", 1.0);
     this->declare_parameter("kd_linear", 0.2);
@@ -16,6 +19,7 @@ FollowNode::FollowNode() : Node("follow_controller") {
     this->declare_parameter("max_linear_vel", 1.0);
     this->declare_parameter("max_angular_vel", 2.0);
 
+    // Get Parameters
     control_freq_ = this->get_parameter("control_frequency").as_double();
     kp_linear_ = this->get_parameter("kp_linear").as_double();
     kd_linear_ = this->get_parameter("kd_linear").as_double();
@@ -35,9 +39,12 @@ FollowNode::FollowNode() : Node("follow_controller") {
         this->get_parameter("odom_topic").as_string(), 10,
         std::bind(&FollowNode::odom_callback, this, std::placeholders::_1));
 
-    // Publisher
+    // Publishers
     cmd_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
         this->get_parameter("cmd_topic").as_string(), 10);
+    
+    error_pub_ = this->create_publisher<geometry_msgs::msg::Vector3>(
+        this->get_parameter("error_topic").as_string(), 10);
 
     // Timer for control loop
     auto period = std::chrono::duration<double>(1.0 / control_freq_);
@@ -70,64 +77,51 @@ void FollowNode::control_loop() {
 
     const double dt = 1.0 / control_freq_;
     
-    // ==================== Position Error ====================
+    // Position Error
     double dx = target_pose_->pose.position.x - current_odom_->pose.pose.position.x;
     double dy = target_pose_->pose.position.y - current_odom_->pose.pose.position.y;
     double distance_error = std::sqrt(dx * dx + dy * dy);
-    
-    // Distance error derivative using finite difference
     double distance_error_dot = (distance_error - last_dist_error_) / dt;
     
-    // ==================== Angular Error ====================
+    // Angular Error
     double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
     double desired_yaw = std::atan2(dy, dx);
     double angle_error = normalize_angle(desired_yaw - robot_yaw);
-    
-    // Angular error derivative using finite difference
     double angle_error_dot = normalize_angle(angle_error - last_angle_error_) / dt;
 
-    // ==================== Goal Reached Check ====================
+    // Publish Error for Plotting
+    geometry_msgs::msg::Vector3 error_msg;
+    error_msg.x = distance_error;
+    error_msg.y = angle_error;
+    error_msg.z = 0.0;
+    error_pub_->publish(error_msg);
+
+    // Goal Reached Check
     if (distance_error < goal_tolerance_ && std::abs(angle_error) < goal_angle_tolerance_) {
         geometry_msgs::msg::Twist cmd;
         cmd.linear.x = 0.0;
         cmd.angular.z = 0.0;
         cmd_pub_->publish(cmd);
-        
         last_dist_error_ = 0.0;
         last_angle_error_ = 0.0;
         return;
     }
     
-    // ==================== PD Control ====================
-    // Linear velocity: PD controller on distance error
+    // PD Control
     double alignment = std::cos(angle_error);
     double v_pd = kp_linear_ * distance_error + kd_linear_ * distance_error_dot;
     double v = v_pd * std::max(0.0, alignment);
-    
-    // Angular velocity: PD controller on angle error
     double w = kp_angular_ * angle_error + kd_angular_ * angle_error_dot;
     
-    // ==================== Velocity Limits ====================
+    // Velocity Limits
     v = std::clamp(v, 0.0, max_linear_vel_);
     w = std::clamp(w, -max_angular_vel_, max_angular_vel_);
     
-    // ==================== Publish Command ====================
     geometry_msgs::msg::Twist cmd;
     cmd.linear.x = v;
     cmd.angular.z = w;
     cmd_pub_->publish(cmd);
     
-    // // ==================== Debug Output ====================
-    // static int counter = 0;
-    // if (++counter % 50 == 0) {
-    //     RCLCPP_INFO(this->get_logger(), 
-    //                 "dist: %.3fm (%.3fm/s), angle: %.1f° (%.1f°/s), v: %.2f, w: %.2f", 
-    //                 distance_error, distance_error_dot,
-    //                 angle_error * 180.0 / M_PI, angle_error_dot * 180.0 / M_PI,
-    //                 v, w);
-    // }
-    
-    // ==================== Update Previous States ====================
     last_dist_error_ = distance_error;
     last_angle_error_ = angle_error;
 }
