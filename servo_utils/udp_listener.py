@@ -22,6 +22,7 @@ NUM_LEGS = 4
 # --- UDP SETTINGS ---
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5005
+# [J2, J3, J5, J6, ]
 # Converntion for servos: [LF_hip, LF_thigh, LF_knee, RF_hip, RF_thigh, RF_knee, LH_hip, LH_thigh, LH_knee, RH_hip, RH_thigh, RH_knee]
 # PINS = [2,3, 4, 14, 15, 17, 18, 27, 22, 23, 24, 25]
 CENTER_PULSES=[1500, 1400, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]
@@ -30,7 +31,7 @@ PINS = [-1, 3, 4, -1, 15, 17, -1, 27, 22, -1, 23, 25]
 NEUTRAL_ANGLE_DEGREES = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # STARTING_ANGLE_DEGREES = [0., -45, -0, 0., -45., 0, 0., 0., -0, 0., -45., 0,]
 STARTING_ANGLE_DEGREES = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-MULTIPLIERS = [0, 1, -1, 0, -1, 1, 0, 0, -0, 0, -1, 1]
+MULTIPLIERS = [0, 1, -1, 0, -1, 1, 0, 1, -1, 0, -1, 1]
                 
 def send_servo_command(angle, pin, index):
     """Converts a desired angle to PWM and sends the command to the servo."""

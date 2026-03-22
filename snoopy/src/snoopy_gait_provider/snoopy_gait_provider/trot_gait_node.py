@@ -13,7 +13,7 @@ class TrotGaitNode(Node):
         super().__init__('trot_gait_provider')
         
         # --- Parameters ---
-        self.step_frequency = self.declare_parameter('step_frequency', 0.5).value    
+        self.step_frequency = self.declare_parameter('step_frequency', 2.0).value    
         self.max_step_length = self.declare_parameter('max_step_length', 0.1).value 
         self.step_height = self.declare_parameter('step_height', 0.05).value       
         self.base_height = self.declare_parameter('base_height', 0.15).value       
