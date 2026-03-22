@@ -79,6 +79,9 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /home/${DEVUSER}/.bashrc && \
 # Initialize rosdep once (ignore if already done)
 RUN rosdep init || true
 
+# install tmux
+RUN apt-get update && apt-get install -y tmux
+
 # Entrypoint
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

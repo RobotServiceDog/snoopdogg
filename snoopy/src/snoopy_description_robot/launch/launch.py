@@ -49,6 +49,6 @@ def generate_launch_description():
         
         # rsp,
         twist_mux,
-        snoopy_gait,
+        # snoopy_gait,
         # follow_controller,
     ])
