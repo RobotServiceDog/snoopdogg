@@ -35,14 +35,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-twist-mux \
     ros-humble-xacro \
     ros-humble-teleop-twist-keyboard \
+    ros-humble-cv-bridge \
+    libopencv-dev \
+    libopencv-contrib-dev \
+    libv4l-dev \
+    v4l-utils \
     && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y \
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
     libsm6 \
     libxext6 \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install opencv-python
+# Create non-root user (robust if UID/GID already exist)
+
 # Create non-root user (robust if UID/GID already exist)
 ARG DEVUSER=dev
 ARG UID=1000
