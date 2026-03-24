@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <list>
 
 struct IK_Config
 {   
@@ -15,7 +16,8 @@ struct IK_Config
     double sim_theta_2_offset;
     double sim_theta_3_offset;
     double real_theta_2_offset;      
-    double real_theta_3_offset;     
+    double real_theta_3_offset;
+    std::vector<double> real_theta_offsets;     
     std::map<std::pair<std::string, std::string>, double> servo_angle_offsets;
 
     // Offsets from hip to virtual hip joint
@@ -34,7 +36,7 @@ class InverseKinematics
         InverseKinematics();
 
         IK_Config ik_config_;
-        void leg_inverse_kinematics(std::string env, std::vector<double>& joint_angles, int leg_side_constant, double x_pos, double y_pos, double z_pos);
+        void leg_inverse_kinematics(std::string env, std::vector<double>& joint_angles, int leg_side_constant, double x_pos, double y_pos, double z_pos, int index);
     
     private:
         // Helper variables for inverse kinematics calculations

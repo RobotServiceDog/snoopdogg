@@ -90,7 +90,7 @@ void ServoControlLifecycleNode::init_udp_socket()
 
 void ServoControlLifecycleNode::servo_callback(const sensor_msgs::msg::JointState::SharedPtr msg)
 {
-    RCLCPP_INFO(get_logger(), "Received JointState with %zu positions", msg->position.size());
+    // RCLCPP_INFO(get_logger(), "Received JointState with %zu positions", msg->position.size());
     // Handle servo commands here
 
     std::string message = "Hello from C++ UDP\n";
@@ -106,9 +106,10 @@ void ServoControlLifecycleNode::servo_callback(const sensor_msgs::msg::JointStat
 
     if (sent_bytes < 0) {
         perror("sendto failed");
-    } else {
-         RCLCPP_INFO(get_logger(), "Message sent.");
-    }    
+    } 
+    // else {
+    //     //  RCLCPP_INFO(get_logger(), "Message sent.");
+    // }    
 
 }
 

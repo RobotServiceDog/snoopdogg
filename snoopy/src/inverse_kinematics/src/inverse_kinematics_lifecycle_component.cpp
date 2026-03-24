@@ -8,6 +8,7 @@ void InverseKinematicsLifecycleNode::load_parameters_()
     this->get_parameter("sim_theta_3_offset", ik_solver_.ik_config_.sim_theta_3_offset);
     this->get_parameter("real_theta_2_offset", ik_solver_.ik_config_.real_theta_2_offset);
     this->get_parameter("real_theta_3_offset", ik_solver_.ik_config_.real_theta_3_offset);
+    this->get_parameter("real_theta_offsets", ik_solver_.ik_config_.real_theta_offsets);
     this->get_parameter("hip_offset_x", ik_solver_.ik_config_.hip_offset_x);
     this->get_parameter("hip_offset_z", ik_solver_.ik_config_.hip_offset_z);
     this->get_parameter("h", ik_solver_.ik_config_.h);
@@ -24,14 +25,14 @@ void InverseKinematicsLifecycleNode::leg_position_callback_(const comm_utils::ms
     environment_ = msg->env;
     foot_positions_ = msg->foot_position;
 
-    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->LEFT_LEG_CONSTANT, foot_positions_[0], foot_positions_[1], foot_positions_[2]);
-    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[0], joint_angles_[1], joint_angles_[2]);
-    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->RIGHT_LEG_CONSTANT, foot_positions_[3], foot_positions_[4], foot_positions_[5]);
-    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[3], joint_angles_[4], joint_angles_[5]);
-    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->LEFT_LEG_CONSTANT, foot_positions_[6], foot_positions_[7], foot_positions_[8]);
-    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[6], joint_angles_[7], joint_angles_[8]);
-    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->RIGHT_LEG_CONSTANT, foot_positions_[9], foot_positions_[10], foot_positions_[11]);
-    RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[9], joint_angles_[10], joint_angles_[11]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->LEFT_LEG_CONSTANT, foot_positions_[0], foot_positions_[1], foot_positions_[2], 0);
+    // RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[0], joint_angles_[1], joint_angles_[2]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->RIGHT_LEG_CONSTANT, foot_positions_[3], foot_positions_[4], foot_positions_[5], 2);
+    // RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[3], joint_angles_[4], joint_angles_[5]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->LEFT_LEG_CONSTANT, foot_positions_[6], foot_positions_[7], foot_positions_[8], 4);
+    // RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[6], joint_angles_[7], joint_angles_[8]);
+    ik_solver_.leg_inverse_kinematics(environment_, joint_angles_, msg->RIGHT_LEG_CONSTANT, foot_positions_[9], foot_positions_[10], foot_positions_[11], 6);
+    // RCLCPP_INFO(this->get_logger(), "Joint angles calculated: [theta1: %f, theta2: %f, theta3: %f]", joint_angles_[9], joint_angles_[10], joint_angles_[11]);
 
     // Publish joint states
     // if (environment_ == "sim") {
@@ -56,6 +57,7 @@ InverseKinematicsLifecycleNode::InverseKinematicsLifecycleNode(const rclcpp::Nod
     this->declare_parameter<double>("sim_theta_3_offset");
     this->declare_parameter<double>("real_theta_2_offset");
     this->declare_parameter<double>("real_theta_3_offset");
+    this->declare_parameter<std::vector<double>>("real_theta_offsets");
     this->declare_parameter<double>("hip_offset_x");
     this->declare_parameter<double>("hip_offset_z");
     this->declare_parameter<double>("h");

@@ -2,7 +2,7 @@
 
 InverseKinematics::InverseKinematics() = default;
 
-void InverseKinematics::leg_inverse_kinematics(std::string env, std::vector<double>& joint_angles, int leg_side_constant, double x_pos, double y_pos, double z_pos)
+void InverseKinematics::leg_inverse_kinematics(std::string env, std::vector<double>& joint_angles, int leg_side_constant, double x_pos, double y_pos, double z_pos, int index)
 {
     // Write xyz wrt virtual hip joint
     x_pos = x_pos - ik_config_.hip_offset_x;
@@ -36,8 +36,10 @@ void InverseKinematics::leg_inverse_kinematics(std::string env, std::vector<doub
         theta3_ -= ik_config_.servo_angle_offsets[{env, "theta_3"}];
     }
     else if (env == "real") {
-        theta3_ = ik_config_.servo_angle_offsets[{env, "theta_3"}] + std::abs(theta2_) - std::abs(theta3_);
-        theta2_ -= ik_config_.servo_angle_offsets[{env, "theta_2"}];
+        theta3_ = ik_config_.real_theta_offsets[index+1] + std::abs(theta2_) - std::abs(theta3_);
+        // printf("Calculated theta3 before offset: %f\n", ik_config_.real_theta_offsets[index+1]);
+        theta2_ -= ik_config_.real_theta_offsets[index];
+        // printf("Calculated theta2 before offset: %f\n", ik_config_.real_theta_offsets[index]);
     }
 
     joint_angles.push_back(theta2_);
