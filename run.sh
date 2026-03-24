@@ -20,5 +20,5 @@ docker compose run --rm \
   -e UID=$HOST_UID \
   -e GID=$HOST_GID \
   -e SIM_MODE=$SIM_MODE \
-  --name snoopdogg_container \
+  --name snoopdogg_container2 \
   ros2 bash
