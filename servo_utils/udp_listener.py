@@ -27,7 +27,8 @@ UDP_PORT = 5005
 # [ J2,  J3,  J5,  J6,  J8,  J9, J10, J12]
 # PINS = [-1, 3, 4, -1, 15, 17, -1, 27, 22, -1, 23, 25]
 PINS = [-1, 3, 4, -1, 15, 17, -1, 27, 22, -1, 23, 25]
-CENTER_PULSES=[1500, 1450, 1460, 1500, 1520, 1550, 1500, 1500, 1500, 1500, 1500, 1500]
+# CENTER_PULSES=[1500, 1450, 1460, 1500, 1520, 1550, 1500, 1500, 1500, 1500, 1500, 1500]
+CENTER_PULSES=[1500, 1450, 1460, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]
 # NEUTRAL_ANGLE_DEGREES = [0., -45, -0, 0., -45., 0, 0., 0., -0, 0., -45., 0,]
 NEUTRAL_ANGLE_DEGREES = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # STARTING_ANGLE_DEGREES = [0., -45, -0, 0., -45., 0, 0., 0., -0, 0., -45., 0,]
@@ -89,9 +90,11 @@ try:
         data, addr = sock.recvfrom(1024) # buffer size    
         angles = struct.unpack("12d", data)
         
+        print(np.array(angles) * 180 / np.pi)
+        
         for i, angle in enumerate(angles):
             if angles[i] != prev_angles[i] and PINS[i] != -1:
-                print(f"Sending {angle} to {PINS[i]}")
+                # print(f"Sending {angle * 180 / np.pi} to {PINS[i]}")
                 send_servo_command(angle * 180 / np.pi, PINS[i], i)
         prev_angles = angles        
         
