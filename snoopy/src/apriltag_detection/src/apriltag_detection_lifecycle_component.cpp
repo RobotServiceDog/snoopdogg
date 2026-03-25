@@ -364,10 +364,14 @@ void ApriltagDetectionLifecycleNode::process_frame_and_publish(const cv::Mat &fr
         rotation_matrix.at<double>(0, 2),
         rotation_matrix.at<double>(1, 2),
         rotation_matrix.at<double>(2, 2));
+    // Find the heading such that the tag's backward direction (z-axis) points along the positive x-axis in the robot's frame.
     const double heading = std::atan2(tag_z_axis[0], tag_z_axis[2]);
 
-    apriltag_pose_msg_.x = tvecs.front()[0];
-    apriltag_pose_msg_.y = tvecs.front()[2];  // Pose2D.y used for forward depth (z in camera frame).
+    // apriltag_pose_msg_.x = tvecs.front()[0];
+    // apriltag_pose_msg_.y = tvecs.front()[2];  // Pose2D.y used for forward depth (z in camera frame).
+
+    apriltag_pose_msg_.x = tvecs.front()[2];
+    apriltag_pose_msg_.y = -1 * tvecs.front()[0]; // -1 to align with right hand rule
     apriltag_pose_msg_.theta = heading;
 
     printf("%f\n", apriltag_pose_msg_.y);

@@ -1,6 +1,6 @@
 services:
   ros2:
-    privileged: true
+    # privileged: true
     build:
       context: .
       dockerfile: docker/Dockerfile

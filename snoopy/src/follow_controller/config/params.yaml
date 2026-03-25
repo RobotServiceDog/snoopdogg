@@ -1,6 +1,6 @@
 follow_controller:
   ros__parameters:
-    target_topic: "/goal_pose"
+    target_topic: "/apriltag_pose"
     odom_topic: "/odom"
     cmd_topic: "/cmd_vel"
     control_frequency: 50.0
@@ -8,5 +8,6 @@ follow_controller:
     kd_linear: 0.1
     kp_angular: 2.0
     kd_angular: 0.05
-    goal_tolerance: 0.2
+    goal_tolerance: 0.4
     goal_angle_tolerance: 0.1
+    deadzone_theta: 0.25

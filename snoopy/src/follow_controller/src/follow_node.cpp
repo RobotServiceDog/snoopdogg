@@ -14,7 +14,8 @@ FollowNode::FollowNode() : Node("follow_controller") {
     this->declare_parameter("goal_tolerance", 0.15);
     this->declare_parameter("goal_angle_tolerance", 0.1);
     this->declare_parameter("max_linear_vel", 1.0);
-    this->declare_parameter("max_angular_vel", 2.0);
+    this->declare_parameter("max_angular_vel", 0.2); //2.0
+    this->declare_parameter("deadzone_theta", 0.15);
 
     control_freq_ = this->get_parameter("control_frequency").as_double();
     kp_linear_ = this->get_parameter("kp_linear").as_double();
@@ -25,9 +26,10 @@ FollowNode::FollowNode() : Node("follow_controller") {
     goal_angle_tolerance_ = this->get_parameter("goal_angle_tolerance").as_double();
     max_linear_vel_ = this->get_parameter("max_linear_vel").as_double();
     max_angular_vel_ = this->get_parameter("max_angular_vel").as_double();
+    deadzone_theta_ = this->get_parameter("deadzone_theta").as_double();
 
     // Subscribers
-    target_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
+    target_sub_ = this->create_subscription<geometry_msgs::msg::Pose2D>(
         this->get_parameter("target_topic").as_string(), 10, 
         std::bind(&FollowNode::target_callback, this, std::placeholders::_1));
 
@@ -46,7 +48,7 @@ FollowNode::FollowNode() : Node("follow_controller") {
     RCLCPP_INFO(this->get_logger(), "Follow controller initialized");
 }
 
-void FollowNode::target_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
+void FollowNode::target_callback(const geometry_msgs::msg::Pose2D::SharedPtr msg) {
     target_pose_ = msg;
 }
 
@@ -64,24 +66,29 @@ double FollowNode::quaternion_to_yaw(const geometry_msgs::msg::Quaternion& q) {
 }
 
 void FollowNode::control_loop() {
-    if (!target_pose_ || !current_odom_) {
+    if (!target_pose_) {
         return;
     }
 
     const double dt = 1.0 / control_freq_;
     
     // ==================== Position Error ====================
-    double dx = target_pose_->pose.position.x - current_odom_->pose.pose.position.x;
-    double dy = target_pose_->pose.position.y - current_odom_->pose.pose.position.y;
+    // double dx = target_pose_->pose.position.x - current_odom_->pose.pose.position.x;
+    double dx = target_pose_->x;
+    // double dy = target_pose_->pose.position.y - current_odom_->pose.pose.position.y;
+    double dy = target_pose_->y;
     double distance_error = std::sqrt(dx * dx + dy * dy);
     
     // Distance error derivative using finite difference
     double distance_error_dot = (distance_error - last_dist_error_) / dt;
     
     // ==================== Angular Error ====================
-    double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
-    double desired_yaw = std::atan2(dy, dx);
-    double angle_error = normalize_angle(desired_yaw - robot_yaw);
+    // double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
+    double desired_yaw = std::atan2(dy, dx); // maybe switch to target_pose_->theta
+    // double angle_error = normalize_angle(desired_yaw - robot_yaw);
+    if (std::abs(desired_yaw) <= deadzone_theta_)
+        desired_yaw = 0.0; 
+    double angle_error = normalize_angle(desired_yaw);
     
     // Angular error derivative using finite difference
     double angle_error_dot = normalize_angle(angle_error - last_angle_error_) / dt;

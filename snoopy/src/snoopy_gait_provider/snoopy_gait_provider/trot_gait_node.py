@@ -14,13 +14,13 @@ class TrotGaitNode(Node):
         
         # --- Parameters ---
         self.step_frequency = self.declare_parameter('step_frequency', 2.0).value    
-        self.max_step_length = self.declare_parameter('max_step_length', 0.2).value 
+        self.max_step_length = self.declare_parameter('max_step_length', 0.1).value 
         self.step_height = self.declare_parameter('step_height', 0.015).value       
-        self.base_height = self.declare_parameter('base_height', 0.15).value # 17 cm from to bottom, 19 cm to servo centre      
+        self.base_height = self.declare_parameter('base_height', 0.17).value # 17 cm from to bottom, 19 cm to servo centre      
         self.env = self.declare_parameter('env', 'real').value             
         self.warmup_time = self.declare_parameter('warmup_time', 2.0).value        
         self.home_z = self.declare_parameter('home_z', 0.15).value       
-        self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.1).value     
+        self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.2).value     
 
         # --- Slew Rate / Smoothing Variables ---
         self.current_stride_x = 0.0

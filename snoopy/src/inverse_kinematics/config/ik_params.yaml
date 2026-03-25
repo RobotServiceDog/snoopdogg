@@ -18,8 +18,9 @@ inverse_kinematics_lifecycle_node:
     sim_theta_3_offset:  0.2617
     real_theta_2_offset: 0.5585
     real_theta_3_offset: 0.6807
-    # real_theta_offsets: [IFL, OFL, IFR, OFR, IBL, OBL, IBR, OBR]
-    real_theta_offsets: [0.8105, 0.7254, 0.8130, 0.8078, 0.7405, 0.7854, 0.7230, 0.8078]
+    # real_theta_offsets: [IFL,     OFL,    IFR,   OFR,     IBL,    OBL,    IBR,    OBR]
+    # real_theta_offsets: [0.8705, 0.7254, 0.8730, 0.8078, 0.8005, 0.8254, 0.8830, 0.8178]
+    real_theta_offsets: [0.8705, 0.7254, 0.8130, 0.8078, 0.7405, 0.7854, 0.8030, 0.8578]
     # real_theta_offsets: [0.6981, 0.7854, 0.5585, 0.6807, 0.7505, 0.7854, 0.7330, 0.8378]
 
     hip_offset_x: 0.02735
