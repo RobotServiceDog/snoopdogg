@@ -12,7 +12,7 @@ REFRESH_RATE_HZ = 250       # The desired PWM refresh rate (frequency)
 # --- VERIFIED SYMMETRICAL LIMITS ---
 CENTER_PULSE = 1500         # Symmetrical center pulse width (micro-seconds)
 MIN_PULSE = 680             # The lowest non-binding pulse width.
-MAX_PULSE = 1900            # The highest non-binding pulse width.
+MAX_PULSE = 2320            # The highest non-binding pulse width.
 MICROS_PER_DEG = 11.3333
 
 # --- ROBOT CONSTANTS ---
