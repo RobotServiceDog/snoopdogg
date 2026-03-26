@@ -18,6 +18,7 @@ install(
 install(
   DIRECTORY meshes
   DESTINATION share/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.sdf" PATTERN "*.png"
 )
 
 ament_package()

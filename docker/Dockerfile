@@ -21,8 +21,8 @@ RUN if [ "$SIM_MODE" = "ON" ]; then \
         http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | \
         tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update && \
-    apt-get install -y ignition-fortress ros-humble-ros-ign-gazebo ros-humble-ros-ign-bridge ros-humble-gz-ros2-control && \
-    apt-get install -y ros-humble-rviz2 && \
+    apt-get install -y ignition-fortress ros-humble-ros-ign-gazebo ros-humble-ros-ign-bridge ros-humble-gz-ros2-control ros-humble-rviz2 && \
+    apt-get install -y libegl1-mesa-dev libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers vulkan-tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* ; \
     else \
         echo "SIM_MODE=OFF, skipping Ignition installation." ; \

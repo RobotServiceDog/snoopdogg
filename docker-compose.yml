@@ -9,7 +9,6 @@ services:
         GID: ${HOST_GID:-1000}
         DEVUSER: dev
     container_name: snoopy
-    working_dir: /snoopy
     volumes:
       - ./snoopy:/snoopy
       - ros-apt-cache:/var/cache/apt
@@ -17,6 +16,9 @@ services:
       - ccache:/home/dev/.ccache
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /run/user/${HOST_UID}:/run/user/${HOST_UID}
+    devices:
+      - /dev/dri:/dev/dri # Maps host graphics to container
+    privileged: true
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-23}
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
@@ -25,6 +27,10 @@ services:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
       - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}
+      - LIBGL_ALWAYS_SOFTWARE=0
+      - GALLIUM_DRIVER=llvmpipe
+      - QT_X11_NO_MITSHM=1
+      - GZ_RENDERING_ENGINE_GUESS=ogre2
     tty: true
     stdin_open: true
     init: true

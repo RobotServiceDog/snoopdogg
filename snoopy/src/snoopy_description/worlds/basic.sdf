@@ -1,7 +1,22 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
   <world name='basic'>
-    
+
+    <plugin
+      filename="libignition-gazebo6-user-commands-system.so"
+      name="ignition::gazebo::v6::systems::UserCommands"/>
+    <plugin
+      filename="/usr/lib/x86_64-linux-gnu/libignition-gazebo6-physics-system.so"
+      name="ignition::gazebo::v6::systems::Physics"/>
+    <plugin
+      filename="libignition-gazebo6-scene-broadcaster-system.so"
+      name="ignition::gazebo::v6::systems::SceneBroadcaster"/>
+    <plugin 
+      filename="libignition-gazebo6-sensors-system.so"
+      name="ignition::gazebo::v6::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  
     <light name='sun' type='directional'>
       <pose>0 0 10 0 0 0</pose>
       <diffuse>0.8 0.8 0.8 1</diffuse>
@@ -13,7 +28,7 @@
         <quadratic>0.001</quadratic>
       </attenuation>
       <direction>-0.5 0.1 -0.9</direction>
-      <cast_shadows>true</cast_shadows>
+      <cast_shadows>false</cast_shadows>
     </light>
 
     <model name='ground_plane'>
@@ -48,6 +63,52 @@
             <specular>0.8 0.8 0.8 1</specular>
           </material>
         </visual>
+      </link>
+    </model>
+
+    <model name="custom_box_with_image">
+      <pose>1.5 0 0.25 0 0 0</pose> 
+
+      <link name="link">
+        <visual name="box_visual">
+          <geometry>
+            <box>
+              <size>0.5 0.5 0.5</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="image_visual">
+          <pose>-0.251 0 0 0 1.5707 3.14159</pose>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.25 0.25</size> 
+            </plane>
+          </geometry>
+          <material>
+            <pbr>
+              <metal>
+                <albedo_map>AprilTag2.png</albedo_map>
+                <emissive_map>AprilTag2.png</emissive_map> </metal>
+            </pbr>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <emissive>1 1 1 1</emissive> 
+          </material>
+        </visual>
+
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.5 0.5 0.5</size>
+            </box>
+          </geometry>
+        </collision>
       </link>
     </model>
 
