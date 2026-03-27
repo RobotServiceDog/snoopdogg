@@ -114,14 +114,17 @@ CallbackReturn ApriltagDetectionLifecycleNode::on_configure(const rclcpp_lifecyc
         callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
         auto subscription_options = rclcpp::SubscriptionOptions();
         subscription_options.callback_group = callback_group_;
+        
+        auto qos = rclcpp::QoS(10).reliable().durability_volatile();
+
         image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-            image_topic_, rclcpp::SensorDataQoS(),
+            image_topic_, qos,
             std::bind(&ApriltagDetectionLifecycleNode::image_callback, this, std::placeholders::_1),
             subscription_options);
 
         if (use_camera_info_topic_) {
             camera_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
-                camera_info_topic_, rclcpp::SensorDataQoS(),
+                camera_info_topic_, qos,
                 std::bind(&ApriltagDetectionLifecycleNode::camera_info_callback, this, std::placeholders::_1),
                 subscription_options);
         } else {
