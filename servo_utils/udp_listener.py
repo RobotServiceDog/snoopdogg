@@ -27,10 +27,12 @@ UDP_PORT = 5005
 # [ J2,  J3,  J5,  J6,  J8,  J9, J10, J12]
 # PINS = [-1, 3, 4, -1, 15, 17, -1, 27, 22, -1, 23, 25]
 PINS = [-1, 3, 4, -1, 15, 17, -1, 27, 22, -1, 23, 25]
-# CENTER_PULSES=[1500, 1450, 1460, 1500, 1520, 1550, 1500, 1500, 1500, 1500, 1500, 1500]
-CENTER_PULSES=[1500, 1450, 1460, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]
+# CENTER_PULSES=[1500, 1450, 1460, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]
+CENTER_PULSES=[1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]
 # NEUTRAL_ANGLE_DEGREES = [0., -45, -0, 0., -45., 0, 0., 0., -0, 0., -45., 0,]
-NEUTRAL_ANGLE_DEGREES = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+A = [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45]
+NEUTRAL_ANGLE_DEGREES = [0, -33, -40, 0, -34.5, -42, 0, -35, -36, 0, -33, -36]
+NEUTRAL_ANGLE_DEGREES = [a + b for a, b in zip(NEUTRAL_ANGLE_DEGREES, A)]
 # STARTING_ANGLE_DEGREES = [0., -45, -0, 0., -45., 0, 0., 0., -0, 0., -45., 0,]
 STARTING_ANGLE_DEGREES = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 MULTIPLIERS = [0, 1, -1, 0, -1, 1, 0, 1, -1, 0, -1, 1]
@@ -58,7 +60,7 @@ def angle_to_pwm(angle, index):
     )
     return pwm_value
 
-
+print(NEUTRAL_ANGLE_DEGREES)
 print(f"Attempting to connect to pigpio daemon...")
 try:
     pi = pigpio.pi() 
