@@ -13,14 +13,14 @@ class TrotGaitNode(Node):
         super().__init__('trot_gait_provider')
         
         # --- Parameters ---
-        self.step_frequency = self.declare_parameter('step_frequency', 2.0).value    
-        self.max_step_length = self.declare_parameter('max_step_length', 0.1).value 
-        self.step_height = self.declare_parameter('step_height', 0.015).value       
-        self.base_height = self.declare_parameter('base_height', 0.17).value # 17 cm from to bottom, 19 cm to servo centre      
+        self.step_frequency = self.declare_parameter('step_frequency', 2.0).value  # 2  
+        self.max_step_length = self.declare_parameter('max_step_length', 0.10).value # 0.10
+        self.step_height = self.declare_parameter('step_height', 0.015).value     # 0.015  
+        self.base_height = self.declare_parameter('base_height', [0.172, 0.17, 0.168, 0.172]).value # 17 cm from to bottom, 19 cm to servo centre      
         self.env = self.declare_parameter('env', 'real').value             
         self.warmup_time = self.declare_parameter('warmup_time', 2.0).value        
-        self.home_z = self.declare_parameter('home_z', 0.15).value       
-        self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.2).value     
+        self.home_z = self.declare_parameter('home_z', 0.17).value
+        self.max_angular_velocity = self.declare_parameter('max_angular_velocity', 0.5).value     
 
         # --- Slew Rate / Smoothing Variables ---
         self.current_stride_x = 0.0
@@ -37,11 +37,11 @@ class TrotGaitNode(Node):
         
         self.start_time = None
 
-    def get_leg_trajectory(self, phase_offset, is_left_side):
+    def get_leg_trajectory(self, phase_offset, is_left_side, leg_idx):
         """Calculates X, Y, Z for a single leg based on global phase."""
         freq = self.step_frequency
         height = self.step_height
-        base_z = self.base_height
+        base_z = self.base_height[leg_idx]
         # if (phase_offset > 1 and not is_left_side):
         #     print(f"target vel: {self.target_stride_x}")
         # Dynamic stride and turn math
@@ -101,10 +101,10 @@ class TrotGaitNode(Node):
         msg.env = self.env
 
         # 2. Calculate trajectories (passing side info for turn logic)
-        lf_x, lf_y, lf_z = self.get_leg_trajectory(0, True)        # LF (Left)
-        rf_x, rf_y, rf_z = self.get_leg_trajectory(math.pi, False) # RF (Right)
-        lh_x, lh_y, lh_z = self.get_leg_trajectory(math.pi, True)  # LH (Left)
-        rh_x, rh_y, rh_z = self.get_leg_trajectory(0, False)       # RH (Right)
+        lf_x, lf_y, lf_z = self.get_leg_trajectory(0, True, 0)        # LF (Left)
+        rf_x, rf_y, rf_z = self.get_leg_trajectory(math.pi, False, 1) # RF (Right)
+        lh_x, lh_y, lh_z = self.get_leg_trajectory(math.pi, True, 2)  # LH (Left)
+        rh_x, rh_y, rh_z = self.get_leg_trajectory(0, False, 3)       # RH (Right)
 
         raw_positions = [lf_x, -lf_y, lf_z, rf_x, rf_y, rf_z, lh_x, -lh_y, lh_z, rh_x, rh_y, rh_z]
 
