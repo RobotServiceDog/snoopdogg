@@ -13,10 +13,10 @@ class TrotGaitNode(Node):
         super().__init__('trot_gait_provider')
         
         # --- Parameters ---
-        self.step_frequency = self.declare_parameter('step_frequency', 2.0).value  # 2  
+        self.step_frequency = self.declare_parameter('step_frequency', 2).value  # 2  
         self.max_step_length = self.declare_parameter('max_step_length', 0.10).value # 0.10
         self.step_height = self.declare_parameter('step_height', 0.015).value     # 0.015  
-        self.base_height = self.declare_parameter('base_height', [0.172, 0.17, 0.168, 0.172]).value # 17 cm from to bottom, 19 cm to servo centre      
+        self.base_height = self.declare_parameter('base_height', [0.176, 0.166, 0.172, 0.172]).value # 17 cm from to bottom, 19 cm to servo centre      
         self.env = self.declare_parameter('env', 'real').value             
         self.warmup_time = self.declare_parameter('warmup_time', 2.0).value        
         self.home_z = self.declare_parameter('home_z', 0.17).value
@@ -59,7 +59,7 @@ class TrotGaitNode(Node):
         phase = (2 * math.pi * freq * t + phase_offset) % (2 * math.pi)
 
         x = (effective_length / 2) * math.cos(phase)
-        if phase <= (2 * math.pi * 0.5):
+        if phase <= (2 * math.pi * 0.7):
             # Stance phase
             z = base_z 
         else:
