@@ -11,3 +11,4 @@ follow_controller:
     goal_tolerance: 0.4
     goal_angle_tolerance: 0.1
     deadzone_theta: 0.25
+    angular_offset: 0.06

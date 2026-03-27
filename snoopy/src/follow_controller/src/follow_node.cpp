@@ -13,8 +13,9 @@ FollowNode::FollowNode() : Node("follow_controller") {
     this->declare_parameter("kd_angular", 0.3);
     this->declare_parameter("goal_tolerance", 0.15);
     this->declare_parameter("goal_angle_tolerance", 0.1);
-    this->declare_parameter("max_linear_vel", 1.0);
+    this->declare_parameter("max_linear_vel", 0.3);
     this->declare_parameter("max_angular_vel", 0.2); //2.0
+    this->declare_parameter("angular_offset", 0.0);
     this->declare_parameter("deadzone_theta", 0.15);
 
     control_freq_ = this->get_parameter("control_frequency").as_double();
@@ -26,6 +27,7 @@ FollowNode::FollowNode() : Node("follow_controller") {
     goal_angle_tolerance_ = this->get_parameter("goal_angle_tolerance").as_double();
     max_linear_vel_ = this->get_parameter("max_linear_vel").as_double();
     max_angular_vel_ = this->get_parameter("max_angular_vel").as_double();
+    angular_offset_ = this->get_parameter("angular_offset").as_double();
     deadzone_theta_ = this->get_parameter("deadzone_theta").as_double();
 
     // Subscribers
@@ -121,7 +123,7 @@ void FollowNode::control_loop() {
     // ==================== Publish Command ====================
     geometry_msgs::msg::Twist cmd;
     cmd.linear.x = v;
-    cmd.angular.z = w;
+    cmd.angular.z = w + angular_offset_;
     cmd_pub_->publish(cmd);
     
     // // ==================== Debug Output ====================

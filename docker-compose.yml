@@ -11,8 +11,8 @@ services:
         DEVUSER: dev
     container_name: snoopy
     working_dir: /snoopy
-    # devices:
-    #   - /dev/video0:/dev/video0
+    devices:
+      - /dev/video0:/dev/video0
     group_add:
       - video
     volumes:

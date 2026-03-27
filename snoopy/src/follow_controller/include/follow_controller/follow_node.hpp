@@ -40,6 +40,7 @@ private:
     double max_linear_vel_;
     double max_angular_vel_;
     double deadzone_theta_;
+    double angular_offset_;
 };
 
 #endif

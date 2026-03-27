@@ -9,7 +9,7 @@
     camera_read_period_ms: 100
 
     use_camera_info_topic: false
-    calibration_width: 1280
-    calibration_height: 720
-    camera_matrix: [1242.86002, 0.0, 578.436600, 0.0, 1238.06090, 322.452739, 0.0, 0.0, 1.0]
-    distortion_coefficients: [-0.22467977, -0.14194663, -0.00117893, -0.00083476, 0.11091554]
+    calibration_width: 640
+    calibration_height: 360
+    camera_matrix: [622.399, 0.0, 288.983, 0.0, 619.952, 161.089, 0.0, 0.0, 1.0]
+    distortion_coefficients: [-0.2233815,  -0.15420757, -0.00111942, -0.00090665,  0.13272059]
