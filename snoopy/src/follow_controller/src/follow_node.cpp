@@ -4,7 +4,7 @@
 FollowNode::FollowNode() : Node("follow_controller") {
     // Declare Parameters
     this->declare_parameter("target_topic", "/model/leader_sphere/pose");
-    this->declare_parameter("odom_topic", "/odom");
+    // this->declare_parameter("odom_topic", "/odom");
     this->declare_parameter("cmd_topic", "/cmd_vel");
     this->declare_parameter("control_frequency", 50.0);
     this->declare_parameter("kp_linear", 1.0);
@@ -27,13 +27,13 @@ FollowNode::FollowNode() : Node("follow_controller") {
     max_angular_vel_ = this->get_parameter("max_angular_vel").as_double();
 
     // Subscribers
-    target_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
+    target_sub_ = this->create_subscription<geometry_msgs::msg::Pose2D>(
         this->get_parameter("target_topic").as_string(), 10, 
         std::bind(&FollowNode::target_callback, this, std::placeholders::_1));
 
-    odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-        this->get_parameter("odom_topic").as_string(), 10,
-        std::bind(&FollowNode::odom_callback, this, std::placeholders::_1));
+    // odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+    //     this->get_parameter("odom_topic").as_string(), 10,
+    //     std::bind(&FollowNode::odom_callback, this, std::placeholders::_1));
 
     // Publisher
     cmd_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
@@ -46,13 +46,13 @@ FollowNode::FollowNode() : Node("follow_controller") {
     RCLCPP_INFO(this->get_logger(), "Follow controller initialized");
 }
 
-void FollowNode::target_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
+void FollowNode::target_callback(const geometry_msgs::msg::Pose2D::SharedPtr msg) {
     target_pose_ = msg;
 }
 
-void FollowNode::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
-    current_odom_ = msg;
-}
+// void FollowNode::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
+//     current_odom_ = msg;
+// }
 
 double FollowNode::normalize_angle(double angle) {
     return std::remainder(angle, 2.0 * M_PI);
@@ -64,24 +64,24 @@ double FollowNode::quaternion_to_yaw(const geometry_msgs::msg::Quaternion& q) {
 }
 
 void FollowNode::control_loop() {
-    if (!target_pose_ || !current_odom_) {
+    if (!target_pose_){// || !current_odom_) {
         return;
     }
 
     const double dt = 1.0 / control_freq_;
     
     // ==================== Position Error ====================
-    double dx = target_pose_->pose.position.x - current_odom_->pose.pose.position.x;
-    double dy = target_pose_->pose.position.y - current_odom_->pose.pose.position.y;
+    double dx = target_pose_->x;// - current_odom_->pose.pose.position.x;
+    double dy = target_pose_->y;// - current_odom_->pose.pose.position.y;
     double distance_error = std::sqrt(dx * dx + dy * dy);
     
     // Distance error derivative using finite difference
     double distance_error_dot = (distance_error - last_dist_error_) / dt;
     
     // ==================== Angular Error ====================
-    double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
+    // double robot_yaw = quaternion_to_yaw(current_odom_->pose.pose.orientation);
     double desired_yaw = std::atan2(dy, dx);
-    double angle_error = normalize_angle(desired_yaw - robot_yaw);
+    double angle_error = normalize_angle(desired_yaw + 0.2 * target_pose_->theta); // Adding a small offset to encourage better alignment
     
     // Angular error derivative using finite difference
     double angle_error_dot = normalize_angle(angle_error - last_angle_error_) / dt;

@@ -67,13 +67,13 @@
     </model>
 
     <model name="custom_box_with_image">
-      <pose>1.5 0 0.25 0 0 0</pose> 
+      <pose>2.5 0 0.25 0 0 0</pose> 
 
       <link name="link">
         <visual name="box_visual">
           <geometry>
             <box>
-              <size>0.5 0.5 0.5</size>
+              <size>0.25 0.25 0.25</size>
             </box>
           </geometry>
           <material>

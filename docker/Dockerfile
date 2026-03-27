@@ -35,9 +35,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-twist-mux \
     ros-humble-xacro \
     ros-humble-teleop-twist-keyboard \
+    ros-humble-cv-bridge \
+    ros-humble-rqt* \
+    libopencv-dev \
+    libopencv-contrib-dev \
+    libv4l-dev \
+    v4l-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user (robust if UID/GID already exist)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1-mesa-glx \
+    libsm6 \
+    libxext6 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Create non-root user (robust if UID/GID already exist)
 ARG DEVUSER=dev
 ARG UID=1000
 ARG GID=1000

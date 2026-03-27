@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/pose2_d.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "nav_msgs/msg/odometry.hpp" // Added for ground truth
 
@@ -11,22 +12,22 @@ public:
     FollowNode();
 
 private:
-    void target_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-    void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
+    void target_callback(const geometry_msgs::msg::Pose2D::SharedPtr msg);
+    // void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
     void control_loop();
 
     double normalize_angle(double angle);
     double quaternion_to_yaw(const geometry_msgs::msg::Quaternion& q);
     
     // Subscribers and Publishers
-    rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr target_sub_;
-    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+    rclcpp::Subscription<geometry_msgs::msg::Pose2D>::SharedPtr target_sub_;
+    // rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
     // Data storage
-    geometry_msgs::msg::PoseStamped::SharedPtr target_pose_;
-    nav_msgs::msg::Odometry::SharedPtr current_odom_;
+    geometry_msgs::msg::Pose2D::SharedPtr target_pose_;
+    // nav_msgs::msg::Odometry::SharedPtr current_odom_;
     
     // Controller variables
     double kp_linear_, kd_linear_;

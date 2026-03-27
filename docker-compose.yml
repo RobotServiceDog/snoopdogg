@@ -9,6 +9,12 @@ services:
         GID: ${HOST_GID:-1000}
         DEVUSER: dev
     container_name: snoopy
+    working_dir: /snoopy
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/dri:/dev/dri # Maps host graphics to container
+    group_add:
+      - video
     volumes:
       - ./snoopy:/snoopy
       - ros-apt-cache:/var/cache/apt
@@ -16,8 +22,6 @@ services:
       - ccache:/home/dev/.ccache
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /run/user/${HOST_UID}:/run/user/${HOST_UID}
-    devices:
-      - /dev/dri:/dev/dri # Maps host graphics to container
     privileged: true
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-23}

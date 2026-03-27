@@ -115,11 +115,23 @@ def generate_launch_description():
         )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
-    # follow_controller = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([os.path.join(
-    #         get_package_share_directory('follow_controller'),'launch','follow_controller.launch.py'
-    #     )]), launch_arguments={'use_sim_time': 'true'}.items()
-    # )
+    follow_controller = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('follow_controller'),'launch','follow_controller.launch.py'
+        )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
+    inverse_kinematics = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('inverse_kinematics'),'launch','launch.py'
+        )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
+    apriltag_detection = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('apriltag_detection'),'launch','launch.py'
+        )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
 
     # Launch them all!
     return LaunchDescription([
@@ -130,9 +142,12 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         bridge,
+
         twist_mux,
+        apriltag_detection,
+        follow_controller,
         snoopy_gait,
-        # follow_controller,
+        inverse_kinematics,
         
         delayed_controller_spawners,
     ])

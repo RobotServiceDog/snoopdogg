@@ -1,0 +1,15 @@
+/**:
+  ros__parameters:
+    image_topic: /snoopy/camera/image
+    camera_info_topic: /snoopy/camera/camera_info
+    tag_size_m: 0.233
+    target_tag_id: -1
+    environment: 0 # 1: real, 0: sim
+    camera_device_index: 0
+    camera_read_period_ms: 100
+
+    use_camera_info_topic: true
+    calibration_width: 1280
+    calibration_height: 720
+    camera_matrix: [1108.51, 0.0, 640.0, 0.0, 1108.51, 360.0, 0.0, 0.0, 1.0]
+    distortion_coefficients: [0.0, 0.0, 0.0, 0.0, 0.0]
