@@ -11,6 +11,10 @@ if [[ "$1" == "--sim" ]]; then
   SIM_MODE="ON"
 fi
 
+if [[ "$1" == "--attach" ]]; then
+  docker exec -it snoopdogg_container bash
+fi
+
 docker compose build \
   --build-arg UID=$HOST_UID \
   --build-arg GID=$HOST_GID \

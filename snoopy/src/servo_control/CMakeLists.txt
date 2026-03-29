@@ -1,41 +1,55 @@
 cmake_minimum_required(VERSION 3.8)
 project(servo_control)
 
-# --- deps ---
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(std_msgs REQUIRED)
 
-# --- include path ---
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(comm_utils REQUIRED)
+
 include_directories(include)
 
-# --- component as a SHARED library (PLUGIN) ---
+add_library(hardware_interface
+    src/hardware_interface.cpp
+)
+target_include_directories(hardware_interface PUBLIC include)
+
+# Component library
 add_library(servo_control_lifecycle_component SHARED
   src/servo_control_lifecycle_component.cpp
 )
+
 ament_target_dependencies(servo_control_lifecycle_component
-  rclcpp rclcpp_lifecycle rclcpp_components std_msgs
+  rclcpp
+  rclcpp_lifecycle
+  rclcpp_components
+  std_msgs
+  sensor_msgs
 )
 
-# register the plugin
-rclcpp_components_register_nodes(servo_control_lifecycle_component "ServoControlLifecycleNode")
+rclcpp_components_register_nodes(servo_control_lifecycle_component "servo_control::ServoControlLifecycleNode")
 
-# --- install ---
-install(
-  DIRECTORY include/
-  DESTINATION include
+target_link_libraries(servo_control_lifecycle_component
+  hardware_interface
 )
 
+# --- install headers ---
+install(DIRECTORY include/
+        DESTINATION include)
+
+# --- install library ---
 install(TARGETS
-  servo_control_lifecycle_component
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
+        hardware_interface
+        servo_control_lifecycle_component
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
-
-install(DIRECTORY
-  launch DESTINATION share/${PROJECT_NAME})
+# --- install launch files ---
+install(DIRECTORY launch/
+        DESTINATION share/${PROJECT_NAME}/launch)
 
 ament_package()

@@ -11,7 +11,7 @@ import termios
 import tty
 
 # --- SERVO SPECIFICATIONS & LIMITS ---
-SERVO_PIN = 2               # The GPIO pin connected to the servo signal wire (BCM pin 2)
+SERVO_PIN = 3               # The GPIO pin connected to the servo signal wire (BCM pin 2)
 REFRESH_RATE_HZ = 250       # The desired PWM refresh rate (frequency)
 
 # Verified symmetrical limits
@@ -93,10 +93,10 @@ try:
             new_pulse = CURRENT_PULSE + ADJUSTMENT_STEP
         elif key == 's':
             new_pulse = CURRENT_PULSE - ADJUSTMENT_STEP
-        elif key == 'a':
-            new_pulse = MIN_PULSE  # Jump to minimum
-        elif key == 'd':
-            new_pulse = MAX_PULSE  # Jump to maximum
+        # elif key == 'a':
+        #     new_pulse = MIN_PULSE  # Jump to minimum
+        # elif key == 'd':
+        #     new_pulse = MAX_PULSE  # Jump to maximum
         elif key == 'c':
             new_pulse = CENTER_PULSE  # Jump to center
         elif key == 'q':
